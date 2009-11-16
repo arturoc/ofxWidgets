@@ -44,7 +44,7 @@ public:
 		controlStyle.position.x=xmlStyles.getValue(style+":"+controlType+":"+state+":position:x",30);
 		controlStyle.position.y=xmlStyles.getValue(style+":"+controlType+":"+state+":position:y",30);
 
-		controlStyle.text.ttf=true;//xmlStyles.getValue(style+":"+controlType+":"+state+":text:ttf",true);
+		//controlStyle.text.ttf=true;//xmlStyles.getValue(style+":"+controlType+":"+state+":text:ttf",true);
 		if(controlStyle.text.ttf){
 			controlStyle.text.font = new ofTrueTypeFont;
 			controlStyle.text.font->loadFont(xmlStyles.getValue(style+":"+controlType+":"+state+":text:font","verdana.ttf"),8);
