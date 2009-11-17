@@ -22,11 +22,14 @@ public:
 	float min;
 	float max;
 
+	bool intOnly;
+
 	ofxWSlider(){
 		value 			= 0;
 		ftargetValue 	= 0;
 		itargetValue 	= 0;
 		title			= "";
+		intOnly 		= false;
 	}
 
 	void init(const string & _title, float * value, float _min, float _max, const string & style){
@@ -36,6 +39,7 @@ public:
 		min				= _min;
 		max				= _max;
 		setStyles("slider",style);
+		intOnly 		= false;
 	}
 
 	void init(const string & _title, int * value, int _min, int _max, const string & style){
@@ -45,6 +49,7 @@ public:
 		min				= _min;
 		max				= _max;
 		setStyles("slider",style);
+		intOnly = true;
 
 	}
 	void init(const string & _title, float _value, float _min, float _max, const string & style){
@@ -55,6 +60,7 @@ public:
 		max				= _max;
 		value			= ofMap(_value,min,max,0,1);
 		setStyles("slider",style);
+		intOnly 		= false;
 	}
 
 	void init(const string & _title, int _value, int _min, int _max, const string & style){
@@ -65,6 +71,7 @@ public:
 		max				= _max;
 		value			= ofMap(_value,min,max,0,1);
 		setStyles("slider",style);
+		intOnly 		= true;
 
 	}
 	int getValueI(){
@@ -96,6 +103,8 @@ protected:
 
 		float floatValue = ofMap(value,0,1,min,max);
 		int intValue 	 = floatValue;
+
+		if(intOnly) value=ofMap(intValue,min,max,0,1);
 
 		ofNotifyEvent(intEvent,intValue);
 		ofNotifyEvent(floatEvent,floatValue);
@@ -135,6 +144,8 @@ protected:
 			sprintf(msg,"%i",*itargetValue);
 		else if(ftargetValue)
 			sprintf(msg,"%.2f",*ftargetValue);
+		else if(intOnly)
+			sprintf(msg,"%i",(int)ofMap(value,0,1,min,max));
 		else
 			sprintf(msg,"%.2f",ofMap(value,0,1,min,max));
 		ofSetColor(style.text.color.r,style.text.color.g,style.text.color.b);

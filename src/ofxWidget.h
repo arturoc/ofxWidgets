@@ -16,10 +16,15 @@
 #include "ofxXmlSettings.h"
 
 //#define OFXWIDGETS_USING_TUIO
+#define OFXWIDGETS_SEND_OSC
 
 #ifdef OFXWIDGETS_USING_TUIO
 #include "ofxTuioClient.h"
 
+#endif
+
+#ifdef OFXWIDGETS_SEND_OSC
+#include "ofxOsc.h"
 #endif
 
 class ofxWidget {
@@ -95,6 +100,7 @@ public:
 	virtual bool getValueB()=0;
 
 	virtual void enable(){
+
 		ofAddListener(ofEvents.update,this,&ofxWidget::update);
 
 		ofAddListener(ofEvents.mousePressed,this,&ofxWidget::mousePressed);
