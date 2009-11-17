@@ -14,9 +14,11 @@ ofxTuioClient * ofxWidget::tuioClient = NULL;
 #endif
 
 ofxWidget::ofxWidget() {
-	ofxWControlPanel::getControlPanel()->registerControl(this);
-	if(dynamic_cast<ofxWControlPanel*>(this)==NULL)
-	enable();
+	//
+	if(dynamic_cast<ofxWControlPanel*>(this)==NULL){
+		//ofxWControlPanel::getControlPanel()->registerControl(this);
+		enable();
+	}
 	setVisible(true);
 	styleLoader = &(ofxWStyleLoader::getLoader());
 	state		= OFX_WIDGET_UNFOCUSED;
