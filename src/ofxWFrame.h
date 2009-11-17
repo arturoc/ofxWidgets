@@ -24,7 +24,7 @@ public:
 
 	void addSaveButton(const string & filename, const string & xml_root){
 		ofxWButton * button = new ofxWButton;
-		button->init("save to xml",NULL,style);
+		button->init("save to xml",style);
 
 		button->setPosition(getNextPosition());
 
@@ -38,7 +38,7 @@ public:
 
 	void addLoadButton(const string & filename, const string & xml_root){
 		ofxWButton * button = new ofxWButton;
-		button->init("load from xml",NULL,style);
+		button->init("load from xml",style);
 
 		button->setPosition(getNextPosition());
 
@@ -323,9 +323,61 @@ public:
 		return *button;
 	}
 
+	ofxWButton & addButton(const string & title, bool * value, string controlName="", string _style=""){
+		ofxWButton * button = new ofxWButton;
+		button->init(title,value,_style==""?style:_style);
+
+		button->setPosition(getNextPosition());
+
+		controls.push_back(button);
+		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
+
+		controlsIndex[controlName]=button;
+		return *button;
+	}
+
+	ofxWButton & addButton(const string & title, string controlName="", string _style=""){
+		ofxWButton * button = new ofxWButton;
+		button->init(title,_style==""?style:_style);
+
+		button->setPosition(getNextPosition());
+
+		controls.push_back(button);
+		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
+
+		controlsIndex[controlName]=button;
+		return *button;
+	}
+
 	ofxWToggle & addToggle(const string & title, int * value, string controlName="", string _style=""){
 		ofxWToggle * toggle = new ofxWToggle;
 		toggle->init(title,value,_style==""?style:_style);
+
+		toggle->setPosition(getNextPosition());
+
+		controls.push_back(toggle);
+		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
+
+		controlsIndex[controlName]=toggle;
+		return *toggle;
+	}
+
+	ofxWToggle & addToggle(const string & title, bool * value, string controlName="", string _style=""){
+		ofxWToggle * toggle = new ofxWToggle;
+		toggle->init(title,value,_style==""?style:_style);
+
+		toggle->setPosition(getNextPosition());
+
+		controls.push_back(toggle);
+		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
+
+		controlsIndex[controlName]=toggle;
+		return *toggle;
+	}
+
+	ofxWToggle & addToggle(const string & title, string controlName="", string _style=""){
+		ofxWToggle * toggle = new ofxWToggle;
+		toggle->init(title,_style==""?style:_style);
 
 		toggle->setPosition(getNextPosition());
 

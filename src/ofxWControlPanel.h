@@ -15,9 +15,9 @@ public:
 	ofxWControlPanel(){
 		//addButton("disable all",NULL);
 		frameStyle.position=ofPoint(10,10);
-		ofxWButton & buttonEnable 	= addButton("enable all",NULL);
-		ofxWButton & buttonDisable	= addButton("disable all",NULL);
-		ofxWButton & buttonHide 	= addButton("hide",NULL);
+		ofxWButton & buttonEnable 	= addButton("enable all");
+		ofxWButton & buttonDisable	= addButton("disable all");
+		ofxWButton & buttonHide 	= addButton("hide");
 		ofAddListener(buttonEnable.boolEvent,this,&ofxWControlPanel::enableAll);
 		ofAddListener(buttonDisable.boolEvent,this,&ofxWControlPanel::disableAll);
 		ofAddListener(buttonHide.boolEvent,this,&ofxWControlPanel::hide);

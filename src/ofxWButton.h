@@ -15,8 +15,17 @@
 class ofxWButton: public ofxWidget{
 public:
 
-	int *	targetValue;
+	int *	itargetValue;
+	bool *	btargetValue;
 	int		value;
+
+	ofxWButton(){
+		itargetValue=NULL;
+		btargetValue=NULL;
+		value=0;
+	}
+
+	virtual ~ofxWButton(){}
 
 	int getValueI(){
 		return value;
@@ -31,11 +40,33 @@ public:
 	}
 
 	void init(const string & _title, int * _value, string style="default"){
-		targetValue = _value;
+		itargetValue = _value;
 		if(_value)
 			value	= *_value;
 		else
 			value	= 0;
+		title 		= _title;
+
+		setStyles("button",style);
+
+	}
+
+	void init(const string & _title, bool * _value, string style="default"){
+		btargetValue = _value;
+		if(_value)
+			value	= 1;
+		else
+			value	= 0;
+		title 		= _title;
+
+		setStyles("button",style);
+
+	}
+
+	void init(const string & _title, string style="default"){
+		btargetValue = NULL;
+		itargetValue = NULL;
+		value	= 0;
 		title 		= _title;
 
 		setStyles("button",style);
@@ -47,24 +78,28 @@ public:
 
 protected:
 	void on(){
-		if(targetValue)
-			*targetValue=1;
+		if(itargetValue)
+			*itargetValue=1;
+		if(btargetValue)
+			*btargetValue=true;
 		value = 1;
 		bool boolValue = true;
 		ofNotifyEvent(intEvent , value);
 		ofNotifyEvent(boolEvent, boolValue);
 	}
 	void off(){
-		if(targetValue)
-			*targetValue=0;
+		if(itargetValue)
+			*itargetValue=0;
+		if(btargetValue)
+			*btargetValue=false;
 		value = 0;
 		bool boolValue = false;
 		ofNotifyEvent(intEvent , value);
 		ofNotifyEvent(boolEvent, boolValue);
 	}
 	void update(){
-		if(targetValue && value!=*targetValue){
-			value = *targetValue;
+		if(itargetValue && value!=*itargetValue){
+			value = *itargetValue;
 			ofxWidgetEventArgs args;
 			ofxWidget::newEvent(OFX_W_E_VALUE_CHANGED,args);
 		}
