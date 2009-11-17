@@ -9,15 +9,13 @@
 #include "ofxWControlPanel.h"
 
 
-//ofxWControlPanel widgetsControlPanel;
-
 #ifdef OFXWIDGETS_USING_TUIO
 ofxTuioClient * ofxWidget::tuioClient = NULL;
 #endif
 
 ofxWidget::ofxWidget() {
-	//widgetsControlPanel.registerControl(this);
-	//if(dynamic_cast<ofxWControlPanel*>(this)==NULL)
+	ofxWControlPanel::getControlPanel()->registerControl(this);
+	if(dynamic_cast<ofxWControlPanel*>(this)==NULL)
 	enable();
 	setVisible(true);
 	styleLoader = &(ofxWStyleLoader::getLoader());

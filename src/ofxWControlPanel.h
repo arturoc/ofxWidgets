@@ -10,8 +10,6 @@
 
 #include "ofxWFrame.h"
 class ofxWControlPanel: public ofxWFrame{
-public:
-
 	ofxWControlPanel(){
 		//addButton("disable all",NULL);
 		frameStyle.position=ofPoint(10,10);
@@ -24,9 +22,16 @@ public:
 		setVisible(false);
 		disable();
 		enabled=false;
-
-
 	}
+
+public:
+
+	static ofxWControlPanel * getControlPanel(){
+		static ofxWControlPanel instance;
+		return &instance;
+	}
+
+
 
 	void update(ofEventArgs & args){
 	}
