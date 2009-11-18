@@ -22,6 +22,7 @@ public:
 		controlStyle.background.color.r=xmlStyles.getValue(style+":"+controlType+":"+state+":background:color:r",255);
 		controlStyle.background.color.g=xmlStyles.getValue(style+":"+controlType+":"+state+":background:color:g",255);
 		controlStyle.background.color.b=xmlStyles.getValue(style+":"+controlType+":"+state+":background:color:b",255);
+		controlStyle.background.color.a=xmlStyles.getValue(style+":"+controlType+":"+state+":background:color:a",255);
 		controlStyle.background.width=xmlStyles.getValue(style+":"+controlType+":"+state+":background:width",200);
 		controlStyle.background.height=xmlStyles.getValue(style+":"+controlType+":"+state+":background:height",20);
 		controlStyle.background.lineWidth=xmlStyles.getValue(style+":"+controlType+":"+state+":background:lineWidth",0);
@@ -64,6 +65,8 @@ public:
 		frameStyle.height		= xmlStyles.getValue(style+":frame:"+state+":height",200);
 		frameStyle.hSpacing		= xmlStyles.getValue(style+":frame:"+state+":hSpacing",20);
 		frameStyle.vSpacing		= xmlStyles.getValue(style+":frame:"+state+":vSpacing",10);
+		frameStyle.growOnHeight = xmlStyles.getValue(style+":frame:"+state+":grow","height")=="height"?true:false;
+		frameStyle.decoration_h = xmlStyles.getValue(style+":frame:"+state+":decoration_height",20);
 		return frameStyle;
 	}
 

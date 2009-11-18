@@ -22,6 +22,20 @@ public:
 		title = "frame";
 	}
 
+	void init(float x, float y, float width, float height, bool growOnHeight=true){
+		frameStyle.width = width;
+		frameStyle.border.width = width + frameStyle.hSpacing*2.0;
+		frameStyle.height = height;
+		frameStyle.border.height = height + frameStyle.vSpacing*2.0;
+		frameStyle.position.x = x;
+		frameStyle.position.y = y;
+		frameStyle.growOnHeight = growOnHeight;
+	}
+
+	void init(const ofRectangle & shape, bool growOnHeight = true){
+		init(shape.x, shape.y, shape.width, shape.height, growOnHeight);
+	}
+
 	void addSaveButton(const string & filename, const string & xml_root){
 		ofxWButton * button = new ofxWButton;
 		button->init("save to xml",style);
@@ -150,22 +164,20 @@ public:
 		ofSetRectMode(OF_RECTMODE_CORNER);
 
 		//background
-		/*ofFill();
+		ofFill();
 		ofEnableAlphaBlending();
 		ofSetColor(frameStyle.background.color.r,frameStyle.background.color.g,frameStyle.background.color.b, frameStyle.background.color.a);
-		float backgroundX= (frameStyle.border.width-40);
-		float backgroundY= (frameStyle.border.height-40);
-		ofRect(backgroundX,backgroundY,frameStyle.background.width,frameStyle.background.height);
-		ofDisableAlphaBlending();*/
+		ofRect(0,frameStyle.decoration_h,frameStyle.border.width,frameStyle.border.height);
+		ofDisableAlphaBlending();
 
 		// border
 		ofNoFill();
 		ofSetColor(frameStyle.border.color.r,frameStyle.border.color.g,frameStyle.border.color.b);
 		ofSetLineWidth(frameStyle.border.lineWidth);
-		ofRect(0,20,frameStyle.border.width,frameStyle.border.height);
+		ofRect(0,frameStyle.decoration_h,frameStyle.border.width,frameStyle.border.height);
 
 		// menu
-		ofRect(0,0,frameStyle.border.width,20);
+		ofRect(0,0,frameStyle.border.width,frameStyle.decoration_h);
 		//ofDrawBitmapString(toString(state),10,3);
 
 		ofPopMatrix();
@@ -235,7 +247,7 @@ public:
 	}
 
 	void update(){
-		float borderHeight = 0;
+		/*float borderHeight = 0;
 		float maxWidth	 = 0;
 		float maxX		 = 0;
 		for(unsigned i=0; i<controls.size(); i++){
@@ -253,7 +265,7 @@ public:
 			frameStyle.border.height = borderHeight;
 			frameStyle.width = maxWidth;
 			frameStyle.height = borderHeight;
-		}
+		}*/
 
 	}
 
@@ -408,10 +420,10 @@ public:
 	}
 
 	ofPoint getNextPosition(){
-		float totalHeight = 20;
-		float totalWidth = 0;
-		float frameWidth = frameStyle.width!=-1?frameStyle.width:ofGetScreenWidth();
-		float frameHeight = frameStyle.height!=-1?frameStyle.height:ofGetScreenHeight();
+		float totalHeight = frameStyle.vSpacing + frameStyle.decoration_h;
+		float totalWidth = frameStyle.hSpacing;
+		float frameWidth = frameStyle.width!=-1?frameStyle.width:ofGetWidth();
+		float frameHeight = frameStyle.height!=-1?frameStyle.height:ofGetHeight();
 		float maxControlWidth = 0;
 		for(unsigned int i = 0; i<controls.size(); i++){
 			float controlWidth=controls[i]->getControlSize().x;
@@ -420,14 +432,23 @@ public:
 			totalHeight += frameStyle.vSpacing;
 			if(controlWidth>maxControlWidth)
 				maxControlWidth=controlWidth;
-			if(totalHeight>frameHeight){
+			if(totalHeight>frameHeight && !frameStyle.growOnHeight){
 				totalHeight=0;
 				totalWidth+=maxControlWidth+frameStyle.hSpacing;
 				maxControlWidth=0;
 			}
 		}
+
+		// update size when adding new control
+		// TODO: should this be a separate function called from addControls
+		frameStyle.height = MAX(frameStyle.height,totalHeight);
+		frameStyle.border.height = MAX(frameStyle.border.height,totalHeight+frameStyle.vSpacing);
+		frameStyle.width = MAX(frameStyle.width, totalWidth + maxControlWidth);
+		frameStyle.border.width = MAX(frameStyle.border.width, totalWidth + maxControlWidth + frameStyle.hSpacing);
+
 		return ofPoint(frameStyle.position.x+totalWidth,frameStyle.position.y+totalHeight);
 	}
+
 	int getValueI(){
 		return 0;
 	}

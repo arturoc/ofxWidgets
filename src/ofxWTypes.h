@@ -137,8 +137,10 @@ typedef struct ofxWFrameStyle: public ofxWidgetsStyle{
 	float height;
 	float vSpacing;
 	float hSpacing;
+	float decoration_h;
+	bool  growOnHeight;
 
-}ofxYAFrameStyle;
+}ofxWFrameStyle;
 
 
 //--------------------------------------------------

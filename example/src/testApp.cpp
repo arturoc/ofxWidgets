@@ -8,6 +8,10 @@ void testApp::setup(){
 	toggle = false;
 	button = false;
 
+	//optional position and size
+	//if not set it gets from xml and resize when adding controls
+	gui.init(50,200,200,200);
+
 	//controls not linked with any var
 	gui.addSlider("float", (float)5.0, 0.0,10.0,"FLOAT_SLIDER");
 	gui.addSlider("int", (int)5, 0,10,"INT_SLIDER");
