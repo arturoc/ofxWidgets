@@ -12,17 +12,18 @@
 #include "ofxWToggle.h"
 #include "ofxWFps.h"
 #include "ofxWStyleLoader.h"
+#include "ofxWSpinSlider.h"
 #include "ofxXmlSettings.h"
 
 class ofxWFrame: public ofxWidget{
 public:
 
-	ofxWFrame(){
+	ofxWFrame():ofxWidget(""){
 		setStyle("default");
 		title = "frame";
 	}
 
-	void init(float x, float y, float width, float height, bool growOnHeight=true){
+	void init(float x, float y, float width, float height, const string & title="", const string & name="", bool growOnHeight=true){
 		frameStyle.width = width;
 		frameStyle.border.width = width + frameStyle.hSpacing*2.0;
 		frameStyle.height = height;
@@ -30,14 +31,16 @@ public:
 		frameStyle.position.x = x;
 		frameStyle.position.y = y;
 		frameStyle.growOnHeight = growOnHeight;
+		this->title = title;
+		this->name = name;
 	}
 
-	void init(const ofRectangle & shape, bool growOnHeight = true){
-		init(shape.x, shape.y, shape.width, shape.height, growOnHeight);
+	void init(const ofRectangle & shape, const string & title="", const string & name="", bool growOnHeight = true){
+		init(shape.x, shape.y, shape.width, shape.height, title, name, growOnHeight);
 	}
 
 	void addSaveButton(const string & filename, const string & xml_root){
-		ofxWButton * button = new ofxWButton;
+		ofxWButton * button = new ofxWButton("load_" + name);
 		button->init("save to xml",style);
 
 		button->setPosition(getNextPosition());
@@ -51,7 +54,7 @@ public:
 	}
 
 	void addLoadButton(const string & filename, const string & xml_root){
-		ofxWButton * button = new ofxWButton;
+		ofxWButton * button = new ofxWButton("save_" + name);
 		button->init("load from xml",style);
 
 		button->setPosition(getNextPosition());
@@ -178,7 +181,11 @@ public:
 
 		// menu
 		ofRect(0,0,frameStyle.border.width,frameStyle.decoration_h);
-		//ofDrawBitmapString(toString(state),10,3);
+		if(style.text.ttf){
+			style.text.font->drawString(title,frameStyle.hSpacing - frameStyle.border.lineWidth,(frameStyle.decoration_h - style.text.font->getLineHeight())*1.5);
+		}else{
+			ofDrawBitmapString(title, 10, 10);
+		}
 
 		ofPopMatrix();
 
@@ -189,7 +196,7 @@ public:
 			}
 		//}
 	}
-	ofRectangle getControlArea(ofxWidgetsStyle & style){
+	ofRectangle getActiveArea(ofxWidgetsStyle & style){
 		ofRectangle area(frameStyle.position.x,frameStyle.position.y,frameStyle.width,20);
 		return area;
 	}
@@ -270,10 +277,11 @@ public:
 	}
 
 	ofxWSlider & addSlider(const string & title, int * value, int min, int max, string controlName="", const string & _style=""){
-		ofxWSlider * slider = new ofxWSlider;
+		ofxWSlider * slider = new ofxWSlider(controlName);
 		slider->init(title,value,min,max,_style==""?style:_style);
 
 		slider->setPosition(getNextPosition());
+
 
 		controls.push_back(slider);
 
@@ -284,10 +292,11 @@ public:
 	}
 
 	ofxWSlider & addSlider(const string & title, float * value, float min, float max, string controlName="", const string & _style=""){
-		ofxWSlider * slider = new ofxWSlider;
+		ofxWSlider * slider = new ofxWSlider(controlName);
 		slider->init(title,value,min,max,_style==""?style:_style);
 
 		slider->setPosition(getNextPosition());
+
 
 		controls.push_back(slider);
 		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
@@ -297,10 +306,11 @@ public:
 	}
 
 	ofxWSlider & addSlider(const string & title, int value, int min, int max, string controlName="", const string & _style=""){
-		ofxWSlider * slider = new ofxWSlider;
+		ofxWSlider * slider = new ofxWSlider(controlName);
 		slider->init(title,value,min,max,_style==""?style:_style);
 
 		slider->setPosition(getNextPosition());
+
 
 		controls.push_back(slider);
 		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
@@ -310,10 +320,69 @@ public:
 	}
 
 	ofxWSlider & addSlider(const string & title, float value, float min, float max, string controlName="", const string & _style=""){
-		ofxWSlider * slider = new ofxWSlider;
+		ofxWSlider * slider = new ofxWSlider(controlName);
 		slider->init(title,value,min,max,_style==""?style:_style);
 
 		slider->setPosition(getNextPosition());
+
+
+		controls.push_back(slider);
+		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
+
+		controlsIndex[controlName]=slider;
+		return *slider;
+	}
+
+
+	ofxWSpinSlider & addSpinSlider(const string & title, int * value, int min, int max, int step=1, string controlName="", const string & _style=""){
+		ofxWSpinSlider * slider = new ofxWSpinSlider(controlName);
+		slider->init(title,value,min,max,step,_style==""?style:_style);
+
+		slider->setPosition(getNextPosition());
+
+
+		controls.push_back(slider);
+
+		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
+
+		controlsIndex[controlName]=slider;
+		return *slider;
+	}
+
+	ofxWSpinSlider & addSpinSlider(const string & title, float * value, float min, float max, float step=1,  string controlName="", const string & _style=""){
+		ofxWSpinSlider * slider = new ofxWSpinSlider(controlName);
+		slider->init(title,value,min,max,step,_style==""?style:_style);
+
+		slider->setPosition(getNextPosition());
+
+
+		controls.push_back(slider);
+		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
+
+		controlsIndex[controlName]=slider;
+		return *slider;
+	}
+
+	ofxWSpinSlider & addSpinSlider(const string & title, int value, int min, int max, int step=1, string controlName="", const string & _style=""){
+		ofxWSpinSlider * slider = new ofxWSpinSlider(controlName);
+		slider->init(title,value,min,max,step,_style==""?style:_style);
+
+		slider->setPosition(getNextPosition());
+
+
+		controls.push_back(slider);
+		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
+
+		controlsIndex[controlName]=slider;
+		return *slider;
+	}
+
+	ofxWSpinSlider & addSpinSlider(const string & title, float value, float min, float max, float step=1,  string controlName="", const string & _style=""){
+		ofxWSpinSlider * slider = new ofxWSpinSlider(controlName);
+		slider->init(title,value,min,max,step,_style==""?style:_style);
+
+		slider->setPosition(getNextPosition());
+
 
 		controls.push_back(slider);
 		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
@@ -323,10 +392,11 @@ public:
 	}
 
 	ofxWButton & addButton(const string & title, int * value, string controlName="", string _style=""){
-		ofxWButton * button = new ofxWButton;
+		ofxWButton * button = new ofxWButton(controlName);
 		button->init(title,value,_style==""?style:_style);
 
 		button->setPosition(getNextPosition());
+
 
 		controls.push_back(button);
 		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
@@ -336,10 +406,25 @@ public:
 	}
 
 	ofxWButton & addButton(const string & title, bool * value, string controlName="", string _style=""){
-		ofxWButton * button = new ofxWButton;
+		ofxWButton * button = new ofxWButton(controlName);
 		button->init(title,value,_style==""?style:_style);
 
 		button->setPosition(getNextPosition());
+
+
+		controls.push_back(button);
+		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
+
+		controlsIndex[controlName]=button;
+		return *button;
+	}
+
+	ofxWButton & addButton(const string & title, bool value, string controlName="", string _style=""){
+		ofxWButton * button = new ofxWButton(controlName);
+		button->init(title,value,_style==""?style:_style);
+
+		button->setPosition(getNextPosition());
+
 
 		controls.push_back(button);
 		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
@@ -349,10 +434,11 @@ public:
 	}
 
 	ofxWButton & addButton(const string & title, string controlName="", string _style=""){
-		ofxWButton * button = new ofxWButton;
+		ofxWButton * button = new ofxWButton(controlName);
 		button->init(title,_style==""?style:_style);
 
 		button->setPosition(getNextPosition());
+
 
 		controls.push_back(button);
 		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
@@ -362,10 +448,11 @@ public:
 	}
 
 	ofxWToggle & addToggle(const string & title, int * value, string controlName="", string _style=""){
-		ofxWToggle * toggle = new ofxWToggle;
+		ofxWToggle * toggle = new ofxWToggle(controlName);
 		toggle->init(title,value,_style==""?style:_style);
 
 		toggle->setPosition(getNextPosition());
+
 
 		controls.push_back(toggle);
 		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
@@ -375,10 +462,25 @@ public:
 	}
 
 	ofxWToggle & addToggle(const string & title, bool * value, string controlName="", string _style=""){
-		ofxWToggle * toggle = new ofxWToggle;
+		ofxWToggle * toggle = new ofxWToggle(controlName);
 		toggle->init(title,value,_style==""?style:_style);
 
 		toggle->setPosition(getNextPosition());
+
+
+		controls.push_back(toggle);
+		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
+
+		controlsIndex[controlName]=toggle;
+		return *toggle;
+	}
+
+	ofxWToggle & addToggle(const string & title, bool value, string controlName="", string _style=""){
+		ofxWToggle * toggle = new ofxWToggle(controlName);
+		toggle->init(title,value,_style==""?style:_style);
+
+		toggle->setPosition(getNextPosition());
+
 
 		controls.push_back(toggle);
 		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
@@ -388,10 +490,11 @@ public:
 	}
 
 	ofxWToggle & addToggle(const string & title, string controlName="", string _style=""){
-		ofxWToggle * toggle = new ofxWToggle;
+		ofxWToggle * toggle = new ofxWToggle(controlName);
 		toggle->init(title,_style==""?style:_style);
 
 		toggle->setPosition(getNextPosition());
+
 
 		controls.push_back(toggle);
 		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
@@ -401,7 +504,7 @@ public:
 	}
 
 	ofxWidgetFps & addFps(string controlName=""){
-		ofxWidgetFps * fps = new ofxWidgetFps;
+		ofxWidgetFps * fps = new ofxWidgetFps(controlName);
 
 		/*fps->setEnabledStyle(buttonStyle);
 		fps->setDisabledStyle(buttonStyle);
@@ -411,6 +514,7 @@ public:
 
 
 		fps->setPosition(getNextPosition());
+
 
 		controls.push_back(fps);
 		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());

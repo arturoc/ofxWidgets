@@ -13,8 +13,10 @@
 ofxTuioClient * ofxWidget::tuioClient = NULL;
 #endif
 
-ofxWidget::ofxWidget() {
+ofxWidget::ofxWidget(const string & name) {
 	//
+	this->name = name;
+
 	if(dynamic_cast<ofxWControlPanel*>(this)==NULL){
 		//ofxWControlPanel::getControlPanel()->registerControl(this);
 		enable();

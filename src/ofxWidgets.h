@@ -10,6 +10,7 @@
 #include "ofxWToggle.h"
 #include "ofxWSlider.h"
 #include "ofxWFrame.h"
+#include "ofxWSpinSlider.h"
 
 
 

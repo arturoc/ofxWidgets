@@ -16,7 +16,7 @@ enum ofxWToggleState{
 };
 class ofxWToggle: public ofxWButton{
 public:
-	ofxWToggle(){
+	ofxWToggle(const string & name):ofxWButton(name){
 
 	}
 

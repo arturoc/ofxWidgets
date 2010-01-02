@@ -10,13 +10,19 @@
 #include "ofxWidget.h"
 
 class ofxWidgetFps: public ofxWidget{
+public:
+
+	ofxWidgetFps(const string & name):ofxWidget(name){}
+
+protected:
+
 	virtual void render(ofxWidgetsStyle & style){
 		ofPushMatrix();
 		//ofTranslate(style.position.x,style.position.y);
 		ofDrawBitmapString(ofToString(ofGetFrameRate()),style.position.x,style.position.y);
 		ofPopMatrix();
 	}
-	virtual ofRectangle getControlArea(ofxWidgetsStyle & style){
+	virtual ofRectangle getActiveArea(ofxWidgetsStyle & style){
 		ofRectangle area;
 		area.x=0;
 		area.y=0;

@@ -31,7 +31,7 @@ class ofxWidget {
 
 protected:
 	virtual void render(ofxWidgetsStyle & style)=0;
-	virtual ofRectangle getControlArea(ofxWidgetsStyle & style)=0;
+	virtual ofRectangle getActiveArea(ofxWidgetsStyle & style)=0;
 	//virtual ofRectangle getActiveArea(ofxYAGControlStyle & style)=0;
 	virtual ofxWidgetsState manageEvent(ofxWidgetsEvent event, ofxWidgetEventArgs & args, ofxWidgetsState currentState){
 		return currentState;
@@ -66,7 +66,7 @@ protected:
 	}
 
 	bool mouseIn(){
-		ofRectangle area = getControlArea(getCurrentStyle());
+		ofRectangle area = getActiveArea(getCurrentStyle());
 		bool mouseIn= mouse.x >= area.x &&
 		mouse.x <= area.x + area.width &&
 		mouse.y >= area.y &&
@@ -80,6 +80,8 @@ protected:
 	ofMouseEventArgs mouse;
 	ofxWidgetsState 	state;
 
+	string name;
+
 #ifdef OFXWIDGETS_USING_TUIO
 	static ofxTuioClient * tuioClient;
 #endif
@@ -88,6 +90,7 @@ protected:
 public:
 
 	string title;
+
 
 #ifdef OFXWIDGETS_USING_TUIO
 	static void setTuio(ofxTuioClient & _tuioClient){
@@ -98,6 +101,10 @@ public:
 	virtual int getValueI()=0;
 	virtual float getValueF()=0;
 	virtual bool getValueB()=0;
+
+	string getName() const{
+		return name;
+	}
 
 	virtual void enable(){
 
@@ -147,11 +154,11 @@ public:
 
 
 	ofRectangle getControlArea(){
-		return getControlArea(styleEnabled);
+		return getActiveArea(styleEnabled);
 	}
 
 	ofPoint getControlSize(){
-		ofRectangle area = getControlArea(styleEnabled);
+		ofRectangle area = getActiveArea(styleEnabled);
 		return ofPoint(area.width,area.height);
 	}
 
@@ -163,13 +170,14 @@ public:
 		update();
 	}
 
-	ofxWidget();
+	ofxWidget(const string & name);
 
 	virtual ~ofxWidget();
 
 
 	void setPosition(ofPoint _position){
 		position=_position;
+		newEvent(OFX_W_E_POS_CHANGED,yargs);
 	}
 
 	void setEnabledStyle(ofxWidgetsStyle style){
@@ -327,7 +335,7 @@ public:
 	}*/
 
 	bool cursorIn(TUIO::TuioCursor & tuioCursor){
-		ofRectangle area = getControlArea(getCurrentStyle());
+		ofRectangle area = getActiveArea(getCurrentStyle());
 		bool cursorIn= tuioCursor.getX()>= area.x &&
 		tuioCursor.getX() <= area.x + area.width &&
 		tuioCursor.getY() >= area.y &&
@@ -347,8 +355,8 @@ private:
 	const ofxWStyleLoader * styleLoader;
 
 	ofPoint getRelativePosition(float x, float y){
-		return ofPoint((x-getControlArea(getCurrentStyle()).x)/getControlArea(getCurrentStyle()).width
-							,(y-getControlArea(getCurrentStyle()).y)/getControlArea(getCurrentStyle()).height);
+		return ofPoint((x-getActiveArea(getCurrentStyle()).x)/getActiveArea(getCurrentStyle()).width
+							,(y-getActiveArea(getCurrentStyle()).y)/getActiveArea(getCurrentStyle()).height);
 	}
 
 	ofxWidgetsStyle & getCurrentStyle(){

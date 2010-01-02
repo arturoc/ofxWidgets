@@ -24,7 +24,7 @@ public:
 
 	bool intOnly;
 
-	ofxWSlider(){
+	ofxWSlider(const string & name):ofxWidget(name){
 		value 			= 0;
 		ftargetValue 	= 0;
 		itargetValue 	= 0;
@@ -106,8 +106,8 @@ protected:
 
 		if(intOnly) value=ofMap(intValue,min,max,0,1);
 
-		ofNotifyEvent(intEvent,intValue);
-		ofNotifyEvent(floatEvent,floatValue);
+		ofNotifyEvent(intEvent,intValue, this);
+		ofNotifyEvent(floatEvent,floatValue, this);
 
 		if(ftargetValue)
 			*ftargetValue = floatValue;
@@ -116,7 +116,7 @@ protected:
 			*itargetValue = intValue;
 	}
 
-	void render(ofxWidgetsStyle & style){
+	virtual void render(ofxWidgetsStyle & style){
 		ofPushMatrix();
 		ofTranslate(style.position.x,style.position.y);
 
@@ -129,9 +129,30 @@ protected:
 
 		//foreground
 		ofSetColor(style.foreground.color.r,style.foreground.color.g,style.foreground.color.b);
-		float foregroundX= (style.background.width-style.foreground.width)/2;
-		float foregroundY= (style.background.height-style.foreground.height)/2;
-		ofRect(foregroundX,foregroundY,style.foreground.width*value,style.foreground.height);
+		float foregroundX, foregroundY, foregroundW, foregroundH;
+
+		if(max>0 && min<0){
+			foregroundX = (style.background.width-style.foreground.width)/2+style.foreground.width*ofMap((max + min),min,max,1,0);
+			foregroundY = (style.background.height-style.foreground.height)/2;
+			foregroundW = (style.foreground.width*value-style.foreground.width*ofMap((max + min),min,max,1,0));
+			foregroundH = style.foreground.height;
+			ofRect(foregroundX,foregroundY,foregroundW,foregroundH);
+			ofSetColor(style.border.color.r,style.border.color.g,style.border.color.b);
+			ofSetLineWidth(style.border.lineWidth);
+			ofLine(foregroundX,0,foregroundX,style.border.height);
+		}else if(min>max || max <=0 ){
+			foregroundX = (style.background.width-style.foreground.width)/2 + style.foreground.width;
+			foregroundY = (style.background.height-style.foreground.height)/2;
+			foregroundW = style.foreground.width*value-style.foreground.width;
+			foregroundH = style.foreground.height;
+			ofRect(foregroundX,foregroundY,foregroundW,foregroundH);
+		}else{
+			foregroundX = (style.background.width-style.foreground.width)/2;
+			foregroundY = (style.background.height-style.foreground.height)/2;
+			foregroundW = style.foreground.width*value;
+			foregroundH = style.foreground.height;
+			ofRect(foregroundX,foregroundY,foregroundW,foregroundH);
+		}
 
 		// border
 		ofNoFill();
@@ -158,7 +179,7 @@ protected:
 		ofPopMatrix();
 	}
 
-	ofRectangle getControlArea(ofxWidgetsStyle & style){
+	virtual ofRectangle getActiveArea(ofxWidgetsStyle & style){
 		ofRectangle area;
 		area.x=style.position.x;
 		area.y=style.position.y;
@@ -236,8 +257,6 @@ protected:
 		if(ftargetValue) *ftargetValue = xml.getValue(tag,*ftargetValue);
 		else if(itargetValue) *itargetValue = xml.getValue(tag,*itargetValue);
 	}
-
-private:
 
 	float  value;
 };

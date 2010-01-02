@@ -19,7 +19,7 @@ public:
 	bool *	btargetValue;
 	int		value;
 
-	ofxWButton(){
+	ofxWButton(const string & name):ofxWidget(name){
 		itargetValue=NULL;
 		btargetValue=NULL;
 		value=0;
@@ -41,26 +41,43 @@ public:
 
 	void init(const string & _title, int * _value, string style="default"){
 		itargetValue = _value;
-		if(_value)
+		if(_value){
 			value	= *_value;
-		else
+			state	= *_value?OFX_WIDGET_PRESSED:OFX_WIDGET_UNFOCUSED;
+		}else{
 			value	= 0;
+			state	= OFX_WIDGET_UNFOCUSED;
+		}
+		title 		= _title;
+
+		setStyles("button",style);
+	}
+
+	void init(const string & _title, bool * _value, string style="default"){
+		btargetValue = _value;
+		if(_value && *_value){
+			value	= 1;
+			state	= OFX_WIDGET_PRESSED;
+		}else{
+			value	= 0;
+			state	= OFX_WIDGET_UNFOCUSED;
+		}
 		title 		= _title;
 
 		setStyles("button",style);
 
 	}
 
-	void init(const string & _title, bool * _value, string style="default"){
-		btargetValue = _value;
-		if(_value)
+	void init(const string & _title, bool _value, string style="default"){
+		if(_value){
 			value	= 1;
-		else
+			state	= OFX_WIDGET_PRESSED;
+		}else{
 			value	= 0;
+			state	= OFX_WIDGET_UNFOCUSED;
+		}
 		title 		= _title;
-
 		setStyles("button",style);
-
 	}
 
 	void init(const string & _title, string style="default"){
@@ -71,6 +88,11 @@ public:
 
 		setStyles("button",style);
 
+	}
+
+	void setAutoRepeat(unsigned _ms_first=600, unsigned _ms_autorepeat=30){
+		ms_first = _ms_first;
+		ms_autorepeat = _ms_autorepeat;
 	}
 
 	ofEvent<int>  intEvent;
@@ -84,8 +106,8 @@ protected:
 			*btargetValue=true;
 		value = 1;
 		bool boolValue = true;
-		ofNotifyEvent(intEvent , value);
-		ofNotifyEvent(boolEvent, boolValue);
+		ofNotifyEvent(intEvent , value, this);
+		ofNotifyEvent(boolEvent, boolValue, this);
 	}
 	void off(){
 		if(itargetValue)
@@ -94,8 +116,8 @@ protected:
 			*btargetValue=false;
 		value = 0;
 		bool boolValue = false;
-		ofNotifyEvent(intEvent , value);
-		ofNotifyEvent(boolEvent, boolValue);
+		ofNotifyEvent(intEvent , value, this);
+		ofNotifyEvent(boolEvent, boolValue, this);
 	}
 	void update(){
 		if(itargetValue && value!=*itargetValue){
@@ -103,8 +125,13 @@ protected:
 			ofxWidgetEventArgs args;
 			ofxWidget::newEvent(OFX_W_E_VALUE_CHANGED,args);
 		}
+		if(state == OFX_WIDGET_PRESSED && ms_autorepeat && ofGetElapsedTimeMillis()-last_repeat>ms_autorepeat){
+			on();
+			off();
+			last_repeat = ofGetSystemTime();
+		}
 	}
-	void render(ofxWidgetsStyle & style){
+	virtual void render(ofxWidgetsStyle & style){
 		ofPushMatrix();
 		ofTranslate(style.position.x,style.position.y);
 		ofSetRectMode(OF_RECTMODE_CORNER);
@@ -138,7 +165,7 @@ protected:
 		ofPopMatrix();
 	}
 
-	ofRectangle getControlArea(ofxWidgetsStyle & style){
+	ofRectangle getActiveArea(ofxWidgetsStyle & style){
 		ofRectangle area;
 		area.x=style.position.x;
 		area.y=style.position.y;
@@ -171,6 +198,7 @@ protected:
 
 		case OFX_W_E_POINTER_PRESSED:
 			if(currentState==OFX_WIDGET_FOCUSED){
+				last_repeat = ofGetElapsedTimeMillis()+ms_first;
 				on();
 				return OFX_WIDGET_PRESSED;
 			}
@@ -224,5 +252,9 @@ protected:
 	void loadFrom(ofxXmlSettings & xml, const string & tag){
 		value = xml.getValue(tag,0);
 	}
+
+	int 	last_repeat;
+	int    	ms_first;
+	int		ms_autorepeat;
 };
 
