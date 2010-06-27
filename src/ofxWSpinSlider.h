@@ -13,81 +13,24 @@
 
 class ofxWSpinSlider: public ofxWSlider {
 public:
-	ofxWSpinSlider(const string & name)
-	:ofxWSlider(name)
-	,up(name+"_up",true)
-	,down(name+"_down",false){
-		up.init("");
-		down.init("");
-		up.setAutoRepeat();
-		down.setAutoRepeat();
-		ofAddListener(up.boolEvent,this,&ofxWSpinSlider::upPressed);
-		ofAddListener(down.boolEvent,this,&ofxWSpinSlider::downPressed);
-	}
+	ofxWSpinSlider(const string & name);
+	virtual ~ofxWSpinSlider();
 
-	virtual ~ofxWSpinSlider(){
-
-	}
-	void init(const string & _title, float * value, float _min, float _max, float _step, const string & style){
-		ofxWSlider::init(_title,value,_min,_max,style);
-		step = _step;
-	}
-
-	void init(const string & _title, int * value, int _min, int _max, int _step, const string & style){
-		ofxWSlider::init(_title,value,_min,_max,style);
-		step = _step;
-	}
-	void init(const string & _title, float _value, float _min, float _max, float _step, const string & style){
-		ofxWSlider::init(_title,_value,_min,_max,style);
-		step = _step;
-	}
-
-	void init(const string & _title, int _value, int _min, int _max, int _step, const string & style){
-		ofxWSlider::init(_title,_value,_min,_max,style);
-		step = _step;
-	}
+	void init(const string & _title, float * value, float _min, float _max, float _step, const string & style);
+	void init(const string & _title, int * value, int _min, int _max, int _step, const string & style);
+	void init(const string & _title, float _value, float _min, float _max, float _step, const string & style);
+	void init(const string & _title, int _value, int _min, int _max, int _step, const string & style);
 
 
 protected:
-	void render(ofxWidgetsStyle & style){
-		ofxWidgetsStyle newStyle = style;
-		newStyle.background.width -= up.getControlActiveSize().x + down.getControlActiveSize().x;
-		newStyle.foreground.width -= up.getControlActiveSize().x + down.getControlActiveSize().x;
-		newStyle.border.width -= up.getControlActiveSize().x + down.getControlActiveSize().x;
-		ofxWSlider::render(newStyle);
-	}
+	void render(ofxWidgetsStyle & style);
 
-	void upPressed(bool & value){
-		if(value){
-			if(intOnly)
-				setValue(this->value+ofMap(step,0,max-min,0,1)+ofMap(0.25,0,max-min,0,1));
-			else
-				setValue(this->value+ofMap(step,0,max-min,0,1));
-		}
-	}
+	void upPressed(bool & value);
+	void downPressed(bool & value);
 
-	void downPressed(bool & value){
-		if(value)setValue(this->value-ofMap(step,0,max-min,0,1));
-	}
+	virtual ofxWidgetsState manageEvent(ofxWidgetsEvent event, ofxWidgetEventArgs & args, ofxWidgetsState currentState);
 
-	virtual ofxWidgetsState manageEvent(ofxWidgetsEvent event, ofxWidgetEventArgs & args, ofxWidgetsState currentState){
-		if(event==OFX_W_E_POS_CHANGED){
-			ofPoint pos = getControlPosition();
-			pos.x += getControlActiveSize().x;
-			down.setPosition(pos);
-			pos.x += down.getControlActiveSize().x;
-			up.setPosition(pos);
-			return currentState;
-		}else{
-			return ofxWSlider::manageEvent(event,args,currentState);
-		}
-	}
-
-	ofRectangle getActiveArea(ofxWidgetsStyle & style){
-		ofRectangle area = ofxWSlider::getActiveArea(style);
-		area.width -= down.getControlActiveSize().x + up.getControlActiveSize().x;
-		return area;
-	}
+	ofRectangle getActiveArea(ofxWidgetsStyle & style);
 
 private:
 	ofxWArrowButton up, down;
