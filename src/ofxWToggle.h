@@ -66,6 +66,7 @@ public:
 		case OFX_W_E_KEY_RELEASED:
 		case OFX_W_E_DISABLED:
 		case OFX_W_E_ENABLED:
+		default:
 		break;
 		}
 

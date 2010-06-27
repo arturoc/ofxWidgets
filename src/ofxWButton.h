@@ -266,6 +266,7 @@ protected:
 		case OFX_W_E_POINTER_DRAGGED:
 		case OFX_W_E_KEY_PRESSED:
 		case OFX_W_E_KEY_RELEASED:
+		default:
 		break;
 		}
 

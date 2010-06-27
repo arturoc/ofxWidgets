@@ -614,7 +614,7 @@ public:
 	ofPoint getNextPosition(){
 		float totalHeight = frameStyle.vSpacing + frameStyle.decoration_h;
 		float totalWidth = frameStyle.hSpacing;
-		float frameWidth = frameStyle.width!=-1?frameStyle.width:ofGetWidth();
+		//float frameWidth = frameStyle.width!=-1?frameStyle.width:ofGetWidth();
 		float frameHeight = frameStyle.height!=-1?frameStyle.height:ofGetHeight();
 		float maxControlWidth = 0;
 		for(unsigned int i = 0; i<controls.size(); i++){
