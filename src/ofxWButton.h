@@ -23,6 +23,8 @@ public:
 		itargetValue=NULL;
 		btargetValue=NULL;
 		value=0;
+		prevValue=0;
+		ms_autorepeat=false;
 	}
 
 	virtual ~ofxWButton(){}
@@ -84,6 +86,7 @@ public:
 		btargetValue = NULL;
 		itargetValue = NULL;
 		value	= 0;
+		state	= OFX_WIDGET_UNFOCUSED;
 		title 		= _title;
 
 		setStyles("button",style);
@@ -105,6 +108,7 @@ protected:
 		if(btargetValue)
 			*btargetValue=true;
 		value = 1;
+		prevValue = 1;
 		bool boolValue = true;
 		ofNotifyEvent(intEvent , value, this);
 		ofNotifyEvent(boolEvent, boolValue, this);
@@ -115,21 +119,36 @@ protected:
 		if(btargetValue)
 			*btargetValue=false;
 		value = 0;
+		prevValue = 0;
 		bool boolValue = false;
 		ofNotifyEvent(intEvent , value, this);
 		ofNotifyEvent(boolEvent, boolValue, this);
 	}
-	void update(){
-		if(itargetValue && value!=*itargetValue){
-			value = *itargetValue;
+	virtual void update(){
+		if(itargetValue ){
+			if(value!=*itargetValue){
+				value = *itargetValue;
+				ofxWidgetEventArgs args;
+				ofxWidget::newEvent(OFX_W_E_VALUE_CHANGED,args);
+			}
+		}else
+		if(btargetValue){
+			if(value!=*btargetValue){
+				value = *btargetValue;
+				ofxWidgetEventArgs args;
+				ofxWidget::newEvent(OFX_W_E_VALUE_CHANGED,args);
+			}
+		}else
+		if(prevValue!=value){
 			ofxWidgetEventArgs args;
 			ofxWidget::newEvent(OFX_W_E_VALUE_CHANGED,args);
 		}
 		if(state == OFX_WIDGET_PRESSED && ms_autorepeat && ofGetElapsedTimeMillis()-last_repeat>ms_autorepeat){
 			on();
 			off();
-			last_repeat = ofGetSystemTime();
+			last_repeat = ofGetElapsedTimeMillis();
 		}
+		prevValue = value;
 	}
 	virtual void render(ofxWidgetsStyle & style){
 		ofPushMatrix();
@@ -165,7 +184,7 @@ protected:
 		ofPopMatrix();
 	}
 
-	ofRectangle getActiveArea(ofxWidgetsStyle & style){
+	virtual ofRectangle getActiveArea(ofxWidgetsStyle & style){
 		ofRectangle area;
 		area.x=style.position.x;
 		area.y=style.position.y;
@@ -173,6 +192,14 @@ protected:
 		area.height=MAX(style.border.height, OF_BITMAP_CHAR_HEIGHT);
 		return area;
 	}
+
+	virtual ofRectangle getTotalArea(ofxWidgetsStyle & style){
+		ofRectangle area = getActiveArea(style);
+		area.width = style.text.position.x;
+		area.width += style.text.font->getStringBoundingBox(title,0,0).width;
+		return area;
+	}
+
 
 	virtual ofxWidgetsState manageEvent(ofxWidgetsEvent event, ofxWidgetEventArgs & args, ofxWidgetsState currentState){
 
@@ -256,5 +283,6 @@ protected:
 	int 	last_repeat;
 	int    	ms_first;
 	int		ms_autorepeat;
+	bool 	prevValue;
 };
 

@@ -1,105 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <default>
-<textbox>
-	<enabled>
-		<background>
-			<color><r>255</r><g>255</g><b>255</b></color>
-			<width>150</width>
-			<height>15</height>
-			<lineWidth>0</lineWidth>
-		</background>
-		
-		<border>
-			<color><r>50</r><g>50</g><b>50</b></color>
-			<width>150</width>
-			<height>15</height>
-			<lineWidth>1</lineWidth>
-		</border>
-		
-		<position><x>0</x><y>0</y></position>
-		
-		<text>
-			<ttf>false</ttf>
-			<position><x>24</x><y>10</y></position>
-			<color><r>0</r><g>0</g><b>0</b></color>
-		</text>
-	</enabled>
-	<focused>
-		<background>
-			<color><r>255</r><g>255</g><b>255</b></color>
-			<width>150</width>
-			<height>15</height>
-			<lineWidth>0</lineWidth>
-		</background>
-		
-		<border>
-			<color><r>50</r><g>50</g><b>50</b></color>
-			<width>150</width>
-			<height>15</height>
-			<lineWidth>1</lineWidth>
-		</border>
-		
-		<position><x>0</x><y>0</y></position>
-		
-		<text>
-			<ttf>false</ttf>
-			<position><x>24</x><y>10</y></position>
-			<color><r>0</r><g>0</g><b>0</b></color>
-		</text>
-	</focused>
-	<pressed>
-		<background>
-			<color><r>255</r><g>255</g><b>255</b></color>
-			<width>150</width>
-			<height>15</height>
-			<lineWidth>0</lineWidth>
-		</background>
-		
-		<border>
-			<color><r>50</r><g>50</g><b>50</b></color>
-			<width>150</width>
-			<height>15</height>
-			<lineWidth>1</lineWidth>
-		</border>
-		
-		<position><x>0</x><y>0</y></position>
-		
-		<text>
-			<ttf>false</ttf>
-			<position><x>24</x><y>10</y></position>
-			<color><r>0</r><g>0</g><b>0</b></color>
-		</text>
-	</pressed>
-</textbox>
 <slider>
 	<enabled>
 		<background>
 			<color><r>255</r><g>255</g><b>255</b></color>
-			<width>150</width>
-			<height>15</height>
+			<width>200</width>
+			<height>20</height>
 			<lineWidth>0</lineWidth>
 		</background>
 		
 		<foreground>
 			<color><r>150</r><g>0</g><b>150</b></color>
-			<width>148</width>
-			<height>12</height>
+			<width>198</width>
+			<height>18</height>
 			<lineWidth>0</lineWidth>
 		</foreground>
 		
 		<border>
 			<color><r>50</r><g>50</g><b>50</b></color>
-			<width>150</width>
-			<height>15</height>
-			<lineWidth>1</lineWidth>
+			<width>200</width>
+			<height>20</height>
+			<lineWidth>2</lineWidth>
 		</border>
 		
 		<position><x>0</x><y>0</y></position>
 		
 		<text>
 			<ttf>false</ttf>
-			<position><x>24</x><y>10</y></position>
+			<position><x>24</x><y>14</y></position>
 			<color><r>0</r><g>0</g><b>0</b></color>
 		</text>
 	</enabled>
@@ -107,30 +36,30 @@
 	<focused>
 		<background>
 			<color><r>200</r><g>180</g><b>200</b></color>
-			<width>150</width>
-			<height>15</height>
+			<width>200</width>
+			<height>20</height>
 			<lineWidth>0</lineWidth>
 		</background>
 		
 		<foreground>
 			<color><r>200</r><g>0</g><b>200</b></color>
-			<width>148</width>
-			<height>12</height>
+			<width>198</width>
+			<height>18</height>
 			<lineWidth>0</lineWidth>
 		</foreground>
 		
 		<border>
 			<color><r>50</r><g>50</g><b>50</b></color>
-			<width>150</width>
-			<height>15</height>
-			<lineWidth>1</lineWidth>
+			<width>200</width>
+			<height>20</height>
+			<lineWidth>2</lineWidth>
 		</border>
 		
 		<position><x>0</x><y>0</y></position>
 		
 		<text>
 			<ttf>false</ttf>
-			<position><x>24</x><y>10</y></position>
+			<position><x>24</x><y>14</y></position>
 			<color><r>0</r><g>0</g><b>0</b></color>
 		</text>
 	</focused>
@@ -138,30 +67,30 @@
 	<pressed>
 		<background>
 			<color><r>200</r><g>180</g><b>200</b></color>
-			<width>150</width>
-			<height>15</height>
+			<width>200</width>
+			<height>20</height>
 			<lineWidth>0</lineWidth>
 		</background>
 		
 		<foreground>
 			<color><r>200</r><g>0</g><b>200</b></color>
-			<width>146</width>
-			<height>12</height>
+			<width>196</width>
+			<height>16</height>
 			<lineWidth>0</lineWidth>
 		</foreground>
 		
 		<border>
 			<color><r>50</r><g>50</g><b>50</b></color>
-			<width>150</width>
-			<height>15</height>
-			<lineWidth>1</lineWidth>
+			<width>200</width>
+			<height>20</height>
+			<lineWidth>2</lineWidth>
 		</border>
 		
 		<position><x>0</x><y>0</y></position>
 		
 		<text>
 			<ttf>false</ttf>
-			<position><x>24</x><y>10</y></position>
+			<position><x>24</x><y>14</y></position>
 			<color><r>0</r><g>0</g><b>0</b></color>
 		</text>
 	</pressed>
@@ -171,23 +100,23 @@
 	<enabled>
 		<background>
 			<color><r>255</r><g>255</g><b>255</b></color>
-			<width>15</width>
-			<height>15</height>
+			<width>20</width>
+			<height>20</height>
 			<lineWidth>0</lineWidth>
 		</background>
 		
 		<foreground>
 			<color><r>255</r><g>255</g><b>255</b></color>
-			<width>15</width>
-			<height>12</height>
+			<width>20</width>
+			<height>18</height>
 			<lineWidth>0</lineWidth>
 		</foreground>
 		
 		<border>
 			<color><r>50</r><g>50</g><b>50</b></color>
-			<width>15</width>
-			<height>15</height>
-			<lineWidth>1</lineWidth>
+			<width>20</width>
+			<height>20</height>
+			<lineWidth>2</lineWidth>
 		</border>
 		
 		<position><x>0</x><y>0</y></position>
@@ -195,15 +124,15 @@
 		<text>
 			<ttf>false</ttf>
 			<color><r>0</r><g>0</g><b>0</b></color>
-			<position><x>24</x><y>10</y></position>
+			<position><x>24</x><y>14</y></position>
 		</text>
 	</enabled>
 	
 	<focused>
 		<background>
 			<color><r>255</r><g>255</g><b>255</b></color>
-			<width>15</width>
-			<height>15</height>
+			<width>20</width>
+			<height>20</height>
 			<lineWidth>0</lineWidth>
 		</background>
 		
@@ -216,16 +145,16 @@
 		
 		<border>
 			<color><r>50</r><g>50</g><b>50</b></color>
-			<width>15</width>
-			<height>15</height>
-			<lineWidth>1</lineWidth>
+			<width>20</width>
+			<height>20</height>
+			<lineWidth>2</lineWidth>
 		</border>
 		
 		<position><x>0</x><y>0</y></position>
 		
 		<text>
 			<ttf>false</ttf>
-			<position><x>24</x><y>10</y></position>
+			<position><x>24</x><y>14</y></position>
 			<color><r>0</r><g>0</g><b>0</b></color>
 		</text>
 	</focused>
@@ -233,30 +162,30 @@
 	<pressed>
 		<background>
 			<color><r>255</r><g>255</g><b>255</b></color>
-			<width>15</width>
-			<height>15</height>
+			<width>20</width>
+			<height>20</height>
 			<lineWidth>0</lineWidth>
 		</background>
 		
 		<foreground>
 			<color><r>150</r><g>0</g><b>150</b></color>
-			<width>12</width>
-			<height>12</height>
+			<width>16</width>
+			<height>16</height>
 			<lineWidth>0</lineWidth>
 		</foreground>
 		
 		<border>
 			<color><r>50</r><g>50</g><b>50</b></color>
-			<width>15</width>
-			<height>15</height>
-			<lineWidth>1</lineWidth>
+			<width>20</width>
+			<height>20</height>
+			<lineWidth>2</lineWidth>
 		</border>
 		
 		<position><x>0</x><y>0</y></position>
 		
 		<text>
 			<ttf>false</ttf>
-			<position><x>24</x><y>10</y></position>
+			<position><x>24</x><y>14</y></position>
 			<color><r>0</r><g>0</g><b>0</b></color>
 		</text>
 	</pressed>
@@ -265,7 +194,7 @@
 
 <frame>
 	<enabled>
-		<width>150</width>
+		<width>200</width>
 		<height>600</height>
 		<vSpacing>10</vSpacing>
 		<hSpacing>20</hSpacing>
@@ -282,7 +211,7 @@
 		
 		<border>
 			<color><r>0</r><g>0</g><b>0</b></color>
-			<width>150</width>
+			<width>200</width>
 			<height>200</height>
 			<lineWidth>1</lineWidth>
 		</border>

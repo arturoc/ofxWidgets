@@ -11,6 +11,9 @@
 #include "ofxWSlider.h"
 #include "ofxWFrame.h"
 #include "ofxWSpinSlider.h"
+#include "ofxWQuadWarp.h"
+#include "ofxWCurve.h"
+#include "ofxWTextBox.h"
 
 
 

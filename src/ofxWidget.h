@@ -32,6 +32,7 @@ class ofxWidget {
 protected:
 	virtual void render(ofxWidgetsStyle & style)=0;
 	virtual ofRectangle getActiveArea(ofxWidgetsStyle & style)=0;
+	virtual ofRectangle getTotalArea(ofxWidgetsStyle & style)=0;
 	//virtual ofRectangle getActiveArea(ofxYAGControlStyle & style)=0;
 	virtual ofxWidgetsState manageEvent(ofxWidgetsEvent event, ofxWidgetEventArgs & args, ofxWidgetsState currentState){
 		return currentState;
@@ -58,11 +59,22 @@ protected:
 		setOutStyle(ofxWStyleLoader::getLoader().getStyle(controlType,"pressed",style));
 	}
 
-	virtual void newEvent(ofxWidgetsEvent event, ofxWidgetEventArgs & args){
-		ofLog(OF_LOG_VERBOSE,title  + " newEvent: " + toString(event));
-		ofLog(OF_LOG_VERBOSE,title  + " newEvent: from " + toString(state));
+	void newEvent(ofxWidgetsEvent event, ofxWidgetEventArgs & args){
+		//ofLog(OF_LOG_VERBOSE,name  + " newEvent: " + toString(event));
+		//ofLog(OF_LOG_VERBOSE,name  + " newEvent: from " + toString(state));
+		ofxWidgetsState prevState = state;
 		state = manageEvent(event,args,state);
-		ofLog(OF_LOG_VERBOSE,title  + " newEvent: to " + toString(state));
+		if(state!=prevState){
+			if(state==OFX_WIDGET_FOCUSED){
+				bool focused = true;
+				ofNotifyEvent(focusedEvent,focused, this);
+			}
+			if(state==OFX_WIDGET_UNFOCUSED){
+				bool focused = false;
+				ofNotifyEvent(focusedEvent,focused, this);
+			}
+		}
+		//ofLog(OF_LOG_VERBOSE,name  + " newEvent: to " + toString(state));
 	}
 
 	bool mouseIn(){
@@ -72,7 +84,7 @@ protected:
 		mouse.y >= area.y &&
 		mouse.y <= area.y + area.height ;
 
-		ofLog(OF_LOG_VERBOSE,(title + " mousein: %i").c_str(),mouseIn?1:0);
+		//ofLog(OF_LOG_VERBOSE,(title + " mousein: %i").c_str(),mouseIn?1:0);
 		return (mouseIn);
 	}
 
@@ -91,6 +103,7 @@ public:
 
 	string title;
 
+	ofEvent<bool> focusedEvent;
 
 #ifdef OFXWIDGETS_USING_TUIO
 	static void setTuio(ofxTuioClient & _tuioClient){
@@ -101,6 +114,7 @@ public:
 	virtual int getValueI()=0;
 	virtual float getValueF()=0;
 	virtual bool getValueB()=0;
+	virtual string getValueS(){ return ""; };
 
 	string getName() const{
 		return name;
@@ -109,11 +123,12 @@ public:
 	virtual void enable(){
 
 		ofAddListener(ofEvents.update,this,&ofxWidget::update);
-
-		ofAddListener(ofEvents.mousePressed,this,&ofxWidget::mousePressed);
-		ofAddListener(ofEvents.mouseReleased,this,&ofxWidget::mouseReleased);
-		ofAddListener(ofEvents.mouseMoved,this,&ofxWidget::mouseMoved);
-		ofAddListener(ofEvents.mouseDragged,this,&ofxWidget::mouseDragged);
+		ofRegisterMouseEvents(this);
+		ofRegisterKeyEvents(this);
+		//ofAddListener(ofEvents.mousePressed,this,&ofxWidget::mousePressed);
+		//ofAddListener(ofEvents.mouseReleased,this,&ofxWidget::mouseReleased);
+		//ofAddListener(ofEvents.mouseMoved,this,&ofxWidget::mouseMoved);
+		//ofAddListener(ofEvents.mouseDragged,this,&ofxWidget::mouseDragged);
 		#ifdef OFXWIDGETS_USING_TUIO
 			if(tuioClient){
 				ofAddListener(tuioClient->cursorAdded, this, &ofxWidget::addTuioCursor);
@@ -128,10 +143,12 @@ public:
 	virtual void disable(){
 		ofRemoveListener(ofEvents.update,this,&ofxWidget::update);
 
-		ofRemoveListener(ofEvents.mousePressed,this,&ofxWidget::mousePressed);
-		ofRemoveListener(ofEvents.mouseReleased,this,&ofxWidget::mouseReleased);
-		ofRemoveListener(ofEvents.mouseMoved,this,&ofxWidget::mouseMoved);
-		ofRemoveListener(ofEvents.mouseDragged,this,&ofxWidget::mouseDragged);
+		//ofRemoveListener(ofEvents.mousePressed,this,&ofxWidget::mousePressed);
+		//ofRemoveListener(ofEvents.mouseReleased,this,&ofxWidget::mouseReleased);
+		//ofRemoveListener(ofEvents.mouseMoved,this,&ofxWidget::mouseMoved);
+		//ofRemoveListener(ofEvents.mouseDragged,this,&ofxWidget::mouseDragged);
+		ofUnregisterMouseEvents(this);
+		ofUnregisterKeyEvents(this);
 		#ifdef OFXWIDGETS_USING_TUIO
 			if(tuioClient){
 				ofRemoveListener(tuioClient->cursorAdded, this, &ofxWidget::addTuioCursor);
@@ -153,13 +170,17 @@ public:
 	}
 
 
-	ofRectangle getControlArea(){
+	ofRectangle getControlActiveArea(){
 		return getActiveArea(styleEnabled);
 	}
 
-	ofPoint getControlSize(){
+	ofPoint getControlActiveSize(){
 		ofRectangle area = getActiveArea(styleEnabled);
 		return ofPoint(area.width,area.height);
+	}
+
+	ofRectangle getControlTotalArea(){
+		return getTotalArea(styleEnabled);
 	}
 
 	ofPoint getControlPosition(){
@@ -178,6 +199,14 @@ public:
 	void setPosition(ofPoint _position){
 		position=_position;
 		newEvent(OFX_W_E_POS_CHANGED,yargs);
+	}
+
+	virtual void setSize(ofPoint _size){
+		/*styleEnabled.;
+		styleFocused;
+		styleDisabled;
+		stylePressed;
+		styleOut;*/
 	}
 
 	void setEnabledStyle(ofxWidgetsStyle style){
@@ -267,6 +296,16 @@ public:
 
 	}
 
+	void keyPressed(ofKeyEventArgs & key){
+		yargs.key = key.key;
+		newEvent(OFX_W_E_KEY_PRESSED,yargs);
+	}
+
+	void keyReleased(ofKeyEventArgs & key){
+		yargs.key = key.key;
+		newEvent(OFX_W_E_KEY_RELEASED,yargs);
+	}
+
 
 #ifdef OFXWIDGETS_USING_TUIO
 	void addTuioCursor(TUIO::TuioCursor &tuioCursor){
@@ -350,14 +389,8 @@ public:
 	virtual void saveTo(ofxXmlSettings & xml, const string & tag){};
 	virtual void loadFrom(ofxXmlSettings & xml, const string & tag){};
 
-private:
 
-	const ofxWStyleLoader * styleLoader;
 
-	ofPoint getRelativePosition(float x, float y){
-		return ofPoint((x-getActiveArea(getCurrentStyle()).x)/getActiveArea(getCurrentStyle()).width
-							,(y-getActiveArea(getCurrentStyle()).y)/getActiveArea(getCurrentStyle()).height);
-	}
 
 	ofxWidgetsStyle & getCurrentStyle(){
 		if(!enabled)
@@ -380,6 +413,14 @@ private:
 		}
 		currentStyle.position+=position;
 		return currentStyle;
+	}
+private:
+
+	const ofxWStyleLoader * styleLoader;
+
+	ofPoint getRelativePosition(float x, float y){
+		return ofPoint((x-getActiveArea(getCurrentStyle()).x)/getActiveArea(getCurrentStyle()).width
+							,(y-getActiveArea(getCurrentStyle()).y)/getActiveArea(getCurrentStyle()).height);
 	}
 
 	ofxWidgetsStyle 	styleEnabled;

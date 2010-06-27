@@ -27,6 +27,8 @@ class testApp : public ofBaseApp{
        float length_float;
        int length_int;
        bool button, toggle;
+       bool option1;
+       int option2,option3;
 
        float event_value;
 

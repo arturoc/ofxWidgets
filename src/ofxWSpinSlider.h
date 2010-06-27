@@ -51,9 +51,9 @@ public:
 protected:
 	void render(ofxWidgetsStyle & style){
 		ofxWidgetsStyle newStyle = style;
-		newStyle.background.width -= up.getControlSize().x + down.getControlSize().x;
-		newStyle.foreground.width -= up.getControlSize().x + down.getControlSize().x;
-		newStyle.border.width -= up.getControlSize().x + down.getControlSize().x;
+		newStyle.background.width -= up.getControlActiveSize().x + down.getControlActiveSize().x;
+		newStyle.foreground.width -= up.getControlActiveSize().x + down.getControlActiveSize().x;
+		newStyle.border.width -= up.getControlActiveSize().x + down.getControlActiveSize().x;
 		ofxWSlider::render(newStyle);
 	}
 
@@ -73,9 +73,9 @@ protected:
 	virtual ofxWidgetsState manageEvent(ofxWidgetsEvent event, ofxWidgetEventArgs & args, ofxWidgetsState currentState){
 		if(event==OFX_W_E_POS_CHANGED){
 			ofPoint pos = getControlPosition();
-			pos.x += getControlSize().x;
+			pos.x += getControlActiveSize().x;
 			down.setPosition(pos);
-			pos.x += down.getControlSize().x;
+			pos.x += down.getControlActiveSize().x;
 			up.setPosition(pos);
 			return currentState;
 		}else{
@@ -85,7 +85,7 @@ protected:
 
 	ofRectangle getActiveArea(ofxWidgetsStyle & style){
 		ofRectangle area = ofxWSlider::getActiveArea(style);
-		area.width -= down.getControlSize().x + up.getControlSize().x;
+		area.width -= down.getControlActiveSize().x + up.getControlActiveSize().x;
 		return area;
 	}
 

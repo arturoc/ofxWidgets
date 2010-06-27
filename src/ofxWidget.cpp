@@ -16,6 +16,9 @@ ofxTuioClient * ofxWidget::tuioClient = NULL;
 ofxWidget::ofxWidget(const string & name) {
 	//
 	this->name = name;
+	enabled = false;
+	visible = false;
+	state = OFX_WIDGET_UNFOCUSED;
 
 	if(dynamic_cast<ofxWControlPanel*>(this)==NULL){
 		//ofxWControlPanel::getControlPanel()->registerControl(this);

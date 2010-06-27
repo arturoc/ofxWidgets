@@ -30,6 +30,11 @@ protected:
 		area.height=10;
 		return area;
 	}
+
+	virtual ofRectangle getTotalArea(ofxWidgetsStyle & style){
+		return getActiveArea(style);
+	}
+
 	int getValueI(){
 		return ofGetFrameRate();
 	}

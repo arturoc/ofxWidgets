@@ -14,6 +14,7 @@
 #include "ofxWStyleLoader.h"
 #include "ofxWSpinSlider.h"
 #include "ofxXmlSettings.h"
+#include "ofxWTextBox.h"
 
 class ofxWFrame: public ofxWidget{
 public:
@@ -21,6 +22,7 @@ public:
 	ofxWFrame():ofxWidget(""){
 		setStyle("default");
 		title = "frame";
+
 	}
 
 	void init(float x, float y, float width, float height, const string & title="", const string & name="", bool growOnHeight=true){
@@ -120,6 +122,15 @@ public:
 		}
 	}
 
+	string getValueS(string controlName){
+		if(controlsIndex.find(controlName)!=controlsIndex.end()){
+			ofxWidget * control = controlsIndex[controlName];
+			return control->getValueS();
+		}else{
+			return "";
+		}
+	}
+
 	bool getValueB(string controlName, bool defaultValue=0){
 		if(controlsIndex.find(controlName)!=controlsIndex.end()){
 			ofxWidget * control = controlsIndex[controlName];
@@ -199,6 +210,10 @@ public:
 	ofRectangle getActiveArea(ofxWidgetsStyle & style){
 		ofRectangle area(frameStyle.position.x,frameStyle.position.y,frameStyle.width,20);
 		return area;
+	}
+
+	ofRectangle getTotalArea(ofxWidgetsStyle & style){
+		return getActiveArea(style);
 	}
 
 	ofxWidgetsState manageEvent(ofxWidgetsEvent event, ofxWidgetEventArgs & args, ofxWidgetsState currentState){
@@ -392,6 +407,7 @@ public:
 	}
 
 	ofxWButton & addButton(const string & title, int * value, string controlName="", string _style=""){
+
 		ofxWButton * button = new ofxWButton(controlName);
 		button->init(title,value,_style==""?style:_style);
 
@@ -406,6 +422,7 @@ public:
 	}
 
 	ofxWButton & addButton(const string & title, bool * value, string controlName="", string _style=""){
+
 		ofxWButton * button = new ofxWButton(controlName);
 		button->init(title,value,_style==""?style:_style);
 
@@ -419,7 +436,8 @@ public:
 		return *button;
 	}
 
-	ofxWButton & addButton(const string & title, bool value, string controlName="", string _style=""){
+	ofxWButton & addButton(const string & title, int value, string controlName="", string _style=""){
+		cout << "adding " << controlName << " value: " << value << endl;
 		ofxWButton * button = new ofxWButton(controlName);
 		button->init(title,value,_style==""?style:_style);
 
@@ -434,6 +452,7 @@ public:
 	}
 
 	ofxWButton & addButton(const string & title, string controlName="", string _style=""){
+
 		ofxWButton * button = new ofxWButton(controlName);
 		button->init(title,_style==""?style:_style);
 
@@ -446,6 +465,7 @@ public:
 		controlsIndex[controlName]=button;
 		return *button;
 	}
+
 
 	ofxWToggle & addToggle(const string & title, int * value, string controlName="", string _style=""){
 		ofxWToggle * toggle = new ofxWToggle(controlName);
@@ -475,7 +495,7 @@ public:
 		return *toggle;
 	}
 
-	ofxWToggle & addToggle(const string & title, bool value, string controlName="", string _style=""){
+	ofxWToggle & addToggle(const string & title, int value, string controlName="", string _style=""){
 		ofxWToggle * toggle = new ofxWToggle(controlName);
 		toggle->init(title,value,_style==""?style:_style);
 
@@ -501,6 +521,74 @@ public:
 
 		controlsIndex[controlName]=toggle;
 		return *toggle;
+	}
+
+	void groupedPressed(const void * sender, bool & pressed){
+		if(pressed){
+			map<string,vector<ofxWToggle*> >::iterator group;
+			for(group=groups.begin();group!=groups.end();group++){
+				bool groupFound = false;
+				for(unsigned i=0; i<group->second.size(); i++){
+					if(group->second[i]==sender){
+						groupFound=true;
+						break;
+					}
+				}
+				if(groupFound){
+					for(unsigned i=0; i<group->second.size(); i++){
+						if(group->second[i]!=sender){
+							if(group->second[i]->btargetValue) *group->second[i]->btargetValue=false;
+							else if(group->second[i]->itargetValue) *group->second[i]->itargetValue=0;
+							else group->second[i]->value=0;
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	ofxWToggle & addGroupedToggle(const string & title, int * value, string group, string controlName="", string _style=""){
+		ofxWToggle & toggle = addToggle(title,value,controlName,style);
+		groups[group].push_back(&toggle);
+		ofAddListener(toggle.boolEvent,this,&ofxWFrame::groupedPressed);
+		return toggle;
+	}
+
+	ofxWToggle & addGroupedToggle(const string & title, bool * value, string group, string controlName="", string _style=""){
+		ofxWToggle & toggle = addToggle(title,value,controlName,style);
+		groups[group].push_back(&toggle);
+		ofAddListener(toggle.boolEvent,this,&ofxWFrame::groupedPressed);
+		return toggle;
+	}
+
+	ofxWToggle & addGroupedToggle(const string & title, int value, string group, string controlName="", string _style=""){
+		ofxWToggle & toggle = addToggle(title,value,controlName,style);
+		groups[group].push_back(&toggle);
+		ofAddListener(toggle.boolEvent,this,&ofxWFrame::groupedPressed);
+		return toggle;
+	}
+
+	ofxWToggle & addGroupedToggle(const string & title, string group, string controlName="", string _style=""){
+		ofxWToggle & toggle = addToggle(title,controlName,style);
+		groups[group].push_back(&toggle);
+		ofAddListener(toggle.boolEvent,this,&ofxWFrame::groupedPressed);
+		return toggle;
+	}
+
+	ofxWTextBox & addTextBox(const string & title, string text="", string controlName="", string _style=""){
+		ofxWTextBox * textBox = new ofxWTextBox(controlName);
+		textBox->init(title,_style==""?style:_style);
+
+		textBox->setPosition(getNextPosition());
+		textBox->setText(text);
+
+
+		controls.push_back(textBox);
+		if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
+
+		controlsIndex[controlName]=textBox;
+		return *textBox;
 	}
 
 	ofxWidgetFps & addFps(string controlName=""){
@@ -530,16 +618,16 @@ public:
 		float frameHeight = frameStyle.height!=-1?frameStyle.height:ofGetHeight();
 		float maxControlWidth = 0;
 		for(unsigned int i = 0; i<controls.size(); i++){
-			float controlWidth=controls[i]->getControlSize().x;
-			float controlHeight=controls[i]->getControlSize().y;
+			float controlWidth=controls[i]->getControlTotalArea().width;
+			float controlHeight=controls[i]->getControlTotalArea().height;
 			totalHeight += controlHeight;
 			totalHeight += frameStyle.vSpacing;
 			if(controlWidth>maxControlWidth)
 				maxControlWidth=controlWidth;
 			if(totalHeight>frameHeight && !frameStyle.growOnHeight){
-				totalHeight=0;
+				totalHeight=frameStyle.vSpacing + frameStyle.decoration_h;
 				totalWidth+=maxControlWidth+frameStyle.hSpacing;
-				maxControlWidth=0;
+				//maxControlWidth=0;
 			}
 		}
 
@@ -548,8 +636,7 @@ public:
 		frameStyle.height = MAX(frameStyle.height,totalHeight);
 		frameStyle.border.height = MAX(frameStyle.border.height,totalHeight+frameStyle.vSpacing);
 		frameStyle.width = MAX(frameStyle.width, totalWidth + maxControlWidth);
-		frameStyle.border.width = MAX(frameStyle.border.width, totalWidth + maxControlWidth + frameStyle.hSpacing);
-
+		frameStyle.border.width = MAX(frameStyle.border.width, totalWidth + maxControlWidth + frameStyle.hSpacing*2);
 		return ofPoint(frameStyle.position.x+totalWidth,frameStyle.position.y+totalHeight);
 	}
 
@@ -567,6 +654,7 @@ public:
 protected:
 	vector<ofxWidget*> controls;
 	map<string, ofxWidget*> controlsIndex;
+	map<string, vector<ofxWToggle*> > groups;
 	string style;
 	ofxWFrameStyle		frameStyle;
 

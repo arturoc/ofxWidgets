@@ -3,14 +3,16 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+	ofSetVerticalSync(true);
 	length_float = 5;
 	length_int = 5;
 	toggle = false;
 	button = false;
 
+	//ofSetLogLevel(OF_LOG_VERBOSE);
 	//optional position and size
 	//if not set it gets from xml and resize when adding controls
-	gui.init(50,200,200,200);
+	gui.init(50,200,50,200);
 
 	//controls not linked with any var
 	gui.addSlider("float", (float)5.0, 0.0,10.0,"FLOAT_SLIDER");
@@ -21,15 +23,25 @@ void testApp::setup(){
 	//controls linked with a var
 	gui.addSlider("length float", &length_float, 0.0,10.0,"FLOAT_LENGTH");
 	gui.addSlider("length int", &length_int, 0,10,"INT_LENGTH");
+	gui.addSpinSlider("length int", &length_float, 0.0,10.0,0.1,"INT_FINE_LENGTH");
+	gui.addSpinSlider("length int", &length_int, 0,10,1,"INT_FINE_LENGTH");
 	gui.addButton("button",&button,"BUTTON_VAR");
 	gui.addToggle("toggle",&toggle,"TOGGLE_VAR");
+
+	//grouped toggles
+	option1=true; option2=0; option3=0;
+	gui.addGroupedToggle("option 1",&option1,"group1");
+	gui.addGroupedToggle("option 2",&option2,"group1");
+	gui.addGroupedToggle("option 3","group1");
+
+	gui.addTextBox("text","hola","TEXT_BOX");
 
 	//controls with listener
 	ofxWSlider & slider = gui.addSlider("float event", (float)5.0, 0.0,10.0,"FLOAT_EVENT");
 	ofAddListener(slider.floatEvent,this,&testApp::onSliderChange);
 
-	gui.addSaveButton("values.xml","test_values");
-	gui.addLoadButton("values.xml","test_values");
+	//gui.addSaveButton("values.xml","test_values");
+	//gui.addLoadButton("values.xml","test_values");
 }
 
 void testApp::onSliderChange(float & value){
@@ -62,6 +74,7 @@ void testApp::draw(){
 
 	ofSetColor(0,0,0);
 	ofDrawBitmapString("event value: " + ofToString(event_value), 10,160);
+	ofDrawBitmapString("text box: " + gui.getValueS("TEXT_BOX"), 10,180);
 }
 
 

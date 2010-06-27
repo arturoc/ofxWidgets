@@ -188,6 +188,9 @@ protected:
 		return area;
 	}
 
+	virtual ofRectangle getTotalArea(ofxWidgetsStyle & style){
+		return getActiveArea(style);
+	}
 
 	// UNFOCUSED -> over -> FOCUSED -> pressed -> PRESSED -> out -> OUT -> released -> UNFOCUSED
 	// PRESSED -> released -> FOCUSSED

@@ -35,7 +35,7 @@ enum ofxWidgetsEvent{
 //--------------------------------------------------
 static string toString(ofxWidgetsEvent event)
 {
-	string strState;
+	string strState = ofToString((int)event);
     if (event == OFX_W_E_POINTER_OVER)
     	strState = "over";
     else if (event == OFX_W_E_POINTER_OUT)
