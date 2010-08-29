@@ -21,6 +21,7 @@ public:
 
 	ofxWFrame();
 
+	void init(const string & title="", const string & name="", bool growOnHeight = true);
 	void init(float x, float y, float width, float height, const string & title="", const string & name="", bool growOnHeight=true);
 	void init(const ofRectangle & shape, const string & title="", const string & name="", bool growOnHeight = true);
 
@@ -93,6 +94,8 @@ public:
 	ofxWidgetsState manageEvent(ofxWidgetsEvent event, ofxWidgetEventArgs & args, ofxWidgetsState currentState);
 
 protected:
+	void addWidget(ofxWidget * widget, string controlName);
+
 	vector<ofxWidget*> controls;
 	map<string, ofxWidget*> controlsIndex;
 	map<string, vector<ofxWToggle*> > groups;
@@ -101,6 +104,9 @@ protected:
 
 	string				filename;
 	string				xml_root;
+	static	ofPoint		next_pos;
+	static float		max_frame_width;
+	bool				auto_pos;
 };
 
 

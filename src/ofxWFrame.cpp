@@ -1,9 +1,24 @@
 #include "ofxWFrame.h"
 
+ofPoint		ofxWFrame::next_pos;
+float		ofxWFrame::max_frame_width=0;
+
 ofxWFrame::ofxWFrame():ofxWidget(""){
 	setStyle("default");
 	title = "frame";
 
+}
+
+void ofxWFrame::init(const string & title, const string & name, bool growOnHeight){
+	if(next_pos.y + frameStyle.interFrameVSpace + frameStyle.decoration_h*2>ofGetHeight()){
+		next_pos.y = 0;
+		next_pos.x += max_frame_width + frameStyle.interFrameHSpace;
+		max_frame_width = 0;
+	}
+	auto_pos = true;
+	init(next_pos.x+frameStyle.interFrameHSpace,next_pos.y+frameStyle.interFrameVSpace,0,0,title,name,growOnHeight);
+	next_pos.y += frameStyle.decoration_h*2+frameStyle.interFrameVSpace;
+	ofLog(OF_LOG_NOTICE,"frame " + title + " at " + ofToString(frameStyle.position.x) + "," + ofToString(frameStyle.position.y));
 }
 
 void ofxWFrame::init(float x, float y, float width, float height, const string & title, const string & name, bool growOnHeight){
@@ -180,14 +195,14 @@ void ofxWFrame::render(ofxWidgetsStyle & style){
 		ofDrawBitmapString(title, 10, 10);
 	}
 
-	ofPopMatrix();
 
-	static ofEventArgs voidArgs;
+	/*static ofEventArgs voidArgs;
 	//if(!isVisible()){
 		for(unsigned i=0; i<controls.size(); i++){
 			controls[i]->draw(voidArgs);
 		}
-	//}
+	//}*/
+	ofPopMatrix();
 }
 ofRectangle ofxWFrame::getActiveArea(ofxWidgetsStyle & style){
 	ofRectangle area(frameStyle.position.x,frameStyle.position.y,frameStyle.width,20);
@@ -273,6 +288,16 @@ void ofxWFrame::update(){
 
 }
 
+void ofxWFrame::addWidget(ofxWidget * widget, string controlName){
+
+	controls.push_back(widget);
+
+	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
+
+	controlsIndex[controlName]=widget;
+}
+
+
 ofxWSlider & ofxWFrame::addSlider(const string & title, int * value, int min, int max, string controlName, const string & _style){
 	ofxWSlider * slider = new ofxWSlider(controlName);
 	slider->init(title,value,min,max,_style==""?style:_style);
@@ -280,11 +305,7 @@ ofxWSlider & ofxWFrame::addSlider(const string & title, int * value, int min, in
 	slider->setPosition(getNextPosition());
 
 
-	controls.push_back(slider);
-
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=slider;
+	addWidget(slider,controlName);
 	return *slider;
 }
 
@@ -295,10 +316,7 @@ ofxWSlider & ofxWFrame::addSlider(const string & title, float * value, float min
 	slider->setPosition(getNextPosition());
 
 
-	controls.push_back(slider);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=slider;
+	addWidget(slider,controlName);
 	return *slider;
 }
 
@@ -309,10 +327,7 @@ ofxWSlider & ofxWFrame::addSlider(const string & title, int value, int min, int 
 	slider->setPosition(getNextPosition());
 
 
-	controls.push_back(slider);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=slider;
+	addWidget(slider,controlName);
 	return *slider;
 }
 
@@ -323,10 +338,7 @@ ofxWSlider & ofxWFrame::addSlider(const string & title, float value, float min, 
 	slider->setPosition(getNextPosition());
 
 
-	controls.push_back(slider);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=slider;
+	addWidget(slider,controlName);
 	return *slider;
 }
 
@@ -338,11 +350,7 @@ ofxWSpinSlider & ofxWFrame::addSpinSlider(const string & title, int * value, int
 	slider->setPosition(getNextPosition());
 
 
-	controls.push_back(slider);
-
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=slider;
+	addWidget(slider,controlName);
 	return *slider;
 }
 
@@ -353,10 +361,7 @@ ofxWSpinSlider & ofxWFrame::addSpinSlider(const string & title, float * value, f
 	slider->setPosition(getNextPosition());
 
 
-	controls.push_back(slider);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=slider;
+	addWidget(slider,controlName);
 	return *slider;
 }
 
@@ -367,10 +372,7 @@ ofxWSpinSlider & ofxWFrame::addSpinSlider(const string & title, int value, int m
 	slider->setPosition(getNextPosition());
 
 
-	controls.push_back(slider);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=slider;
+	addWidget(slider,controlName);
 	return *slider;
 }
 
@@ -381,10 +383,7 @@ ofxWSpinSlider & ofxWFrame::addSpinSlider(const string & title, float value, flo
 	slider->setPosition(getNextPosition());
 
 
-	controls.push_back(slider);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=slider;
+	addWidget(slider,controlName);
 	return *slider;
 }
 
@@ -396,10 +395,7 @@ ofxWButton & ofxWFrame::addButton(const string & title, int * value, string cont
 	button->setPosition(getNextPosition());
 
 
-	controls.push_back(button);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=button;
+	addWidget(button,controlName);
 	return *button;
 }
 
@@ -411,10 +407,7 @@ ofxWButton & ofxWFrame::addButton(const string & title, bool * value, string con
 	button->setPosition(getNextPosition());
 
 
-	controls.push_back(button);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=button;
+	addWidget(button,controlName);
 	return *button;
 }
 
@@ -426,10 +419,7 @@ ofxWButton & ofxWFrame::addButton(const string & title, int value, string contro
 	button->setPosition(getNextPosition());
 
 
-	controls.push_back(button);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=button;
+	addWidget(button,controlName);
 	return *button;
 }
 
@@ -441,10 +431,7 @@ ofxWButton & ofxWFrame::addButton(const string & title, string controlName, stri
 	button->setPosition(getNextPosition());
 
 
-	controls.push_back(button);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=button;
+	addWidget(button,controlName);
 	return *button;
 }
 
@@ -456,10 +443,7 @@ ofxWToggle & ofxWFrame::addToggle(const string & title, int * value, string cont
 	toggle->setPosition(getNextPosition());
 
 
-	controls.push_back(toggle);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=toggle;
+	addWidget(toggle,controlName);
 	return *toggle;
 }
 
@@ -470,10 +454,7 @@ ofxWToggle & ofxWFrame::addToggle(const string & title, bool * value, string con
 	toggle->setPosition(getNextPosition());
 
 
-	controls.push_back(toggle);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=toggle;
+	addWidget(toggle,controlName);
 	return *toggle;
 }
 
@@ -484,10 +465,7 @@ ofxWToggle & ofxWFrame::addToggle(const string & title, int value, string contro
 	toggle->setPosition(getNextPosition());
 
 
-	controls.push_back(toggle);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=toggle;
+	addWidget(toggle,controlName);
 	return *toggle;
 }
 
@@ -498,10 +476,7 @@ ofxWToggle & ofxWFrame::addToggle(const string & title, string controlName, stri
 	toggle->setPosition(getNextPosition());
 
 
-	controls.push_back(toggle);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=toggle;
+	addWidget(toggle,controlName);
 	return *toggle;
 }
 
@@ -566,10 +541,7 @@ ofxWTextBox & ofxWFrame::addTextBox(const string & title, string text, string co
 	textBox->setText(text);
 
 
-	controls.push_back(textBox);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=textBox;
+	addWidget(textBox,controlName);
 	return *textBox;
 }
 
@@ -586,10 +558,7 @@ ofxWidgetFps & ofxWFrame::addFps(string controlName){
 	fps->setPosition(getNextPosition());
 
 
-	controls.push_back(fps);
-	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
-
-	controlsIndex[controlName]=fps;
+	addWidget(fps,controlName);
 	return *fps;
 }
 
@@ -615,11 +584,34 @@ ofPoint ofxWFrame::getNextPosition(){
 
 	// update size when adding new control
 	// TODO: should this be a separate function called from addControls
+	float currentHeigth = frameStyle.border.height ;
+
 	frameStyle.height = MAX(frameStyle.height,totalHeight);
 	frameStyle.border.height = MAX(frameStyle.border.height,totalHeight+frameStyle.vSpacing);
 	frameStyle.width = MAX(frameStyle.width, totalWidth + maxControlWidth);
 	frameStyle.border.width = MAX(frameStyle.border.width, totalWidth + maxControlWidth + frameStyle.hSpacing*2);
-	return ofPoint(frameStyle.position.x+totalWidth,frameStyle.position.y+totalHeight);
+
+	if(auto_pos){
+		if(frameStyle.border.width>max_frame_width)
+			max_frame_width = frameStyle.border.width;
+		next_pos.y += frameStyle.border.height - currentHeigth;
+
+		if(frameStyle.border.height + frameStyle.position.y>ofGetHeight()){
+			for(unsigned i=0;i<controls.size();i++){
+				controls[i]->setPosition(controls[i]->getControlPosition()-ofPoint(frameStyle.position.x,frameStyle.position.y));
+			}
+			frameStyle.position.y = frameStyle.interFrameVSpace;
+			frameStyle.position.x = next_pos.x + max_frame_width + frameStyle.interFrameHSpace*2;
+
+			for(unsigned i=0;i<controls.size();i++){
+				controls[i]->setPosition(controls[i]->getControlPosition()+ofPoint(frameStyle.position.x,frameStyle.position.y));
+			}
+			next_pos.y = frameStyle.position.y + frameStyle.border.height + frameStyle.decoration_h;
+			next_pos.x += max_frame_width + frameStyle.interFrameHSpace;
+			max_frame_width = frameStyle.border.width;
+		}
+	}
+	return ofPoint(totalWidth + frameStyle.position.x,totalHeight + frameStyle.position.y);
 }
 
 int ofxWFrame::getValueI(){
