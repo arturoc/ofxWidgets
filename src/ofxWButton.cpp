@@ -58,10 +58,10 @@ void ofxWButton::init(const string & _title, bool * _value, string style){
 
 void ofxWButton::init(const string & _title, bool _value, string style){
 	if(_value){
-		value	= 1;
+		on();
 		state	= OFX_WIDGET_PRESSED;
 	}else{
-		value	= 0;
+		off();
 		state	= OFX_WIDGET_UNFOCUSED;
 	}
 	title 		= _title;
