@@ -220,7 +220,15 @@ ofxWidgetsState ofxWSlider::manageEvent(ofxWidgetsEvent event, ofxWidgetEventArg
 	case OFX_W_E_POINTER_MOVED:
 	case OFX_W_E_POINTER_DRAGGED:
 	case OFX_W_E_KEY_PRESSED:
+		break;
 	case OFX_W_E_KEY_RELEASED:
+		if(args.key==OF_KEY_LEFT){
+			setValue(value-ofMap(1,min,max,0,1));
+		}else if(args.key==OF_KEY_RIGHT){
+			setValue(value+ofMap(1,min,max,0,1));
+		}
+		break;
+
 	default:
 	break;
 	}

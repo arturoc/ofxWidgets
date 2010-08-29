@@ -62,10 +62,21 @@ public:
 		case OFX_W_E_POINTER_RELEASED:
 		case OFX_W_E_POINTER_MOVED:
 		case OFX_W_E_POINTER_DRAGGED:
-		case OFX_W_E_KEY_PRESSED:
-		case OFX_W_E_KEY_RELEASED:
 		case OFX_W_E_DISABLED:
 		case OFX_W_E_ENABLED:
+		case OFX_W_E_KEY_PRESSED:
+			break;
+		case OFX_W_E_KEY_RELEASED:
+			if(args.key==' ' || args.key==OF_KEY_RETURN){
+				if(currentState==OFX_WIDGET_PRESSED){
+					off();
+					return OFX_WIDGET_FOCUSED;
+				}
+				if(currentState==OFX_WIDGET_FOCUSED){
+					on();
+					return OFX_WIDGET_PRESSED;
+				}
+			}
 		default:
 		break;
 		}

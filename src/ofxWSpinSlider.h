@@ -33,7 +33,7 @@ protected:
 	ofRectangle getActiveArea(ofxWidgetsStyle & style);
 
 private:
-	ofxWArrowButton up, down;
+	ofxWArrowButton down,up;
 	float step;
 };
 

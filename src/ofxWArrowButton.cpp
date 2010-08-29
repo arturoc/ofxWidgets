@@ -66,9 +66,10 @@ ofxWArrowButton::ofxWArrowButton(const string & name, bool up):ofxWButton(name)
 }
 
 void ofxWArrowButton::render(ofxWidgetsStyle & style){
-	ofxWButton::render(style);
 	ofPushStyle();
+	ofxWButton::render(style);
+	ofPopStyle();
+	ofSetColor(255,255,255,255);
 	ofEnableAlphaBlending();
 	arrow.draw(style.position.x + ( style.background.width - arrow_up.width )/2,style.position.y + ( style.background.height - arrow_up.height )/2);
-	ofPopStyle();
 }

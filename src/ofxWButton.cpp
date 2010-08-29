@@ -250,7 +250,13 @@ ofxWidgetsState ofxWButton::manageEvent(ofxWidgetsEvent event, ofxWidgetEventArg
 	case OFX_W_E_POINTER_MOVED:
 	case OFX_W_E_POINTER_DRAGGED:
 	case OFX_W_E_KEY_PRESSED:
+		break;
 	case OFX_W_E_KEY_RELEASED:
+		if(args.key==' ' || args.key==OF_KEY_RETURN){
+			on();
+			off();
+		}
+		break;
 	default:
 	break;
 	}

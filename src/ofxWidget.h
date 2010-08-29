@@ -125,6 +125,8 @@ public:
 
 	void keyReleased(ofKeyEventArgs & key);
 
+	void setFocused(bool isFocused);
+
 
 #ifdef OFXWIDGETS_USING_TUIO
 	void addTuioCursor(TUIO::TuioCursor &tuioCursor);

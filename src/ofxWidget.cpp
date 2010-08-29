@@ -7,7 +7,9 @@
 
 #include "ofxWidget.h"
 #include "ofxWControlPanel.h"
+#include "ofxWInputManager.h"
 
+static ofxWInputManager inputManager;
 
 #ifdef OFXWIDGETS_USING_TUIO
 ofxTuioClient * ofxWidget::tuioClient = NULL;
@@ -27,6 +29,10 @@ ofxWidget::ofxWidget(const string & name) {
 	setVisible(true);
 	styleLoader = &(ofxWStyleLoader::getLoader());
 	state		= OFX_WIDGET_UNFOCUSED;
+
+	if(dynamic_cast<ofxWFrame*>(this)==NULL){
+		inputManager.registerWidget(this);
+	}
 }
 
 ofxWidget::~ofxWidget() {
@@ -89,7 +95,6 @@ void ofxWidget::enable(){
 
 	ofAddListener(ofEvents.update,this,&ofxWidget::update);
 	ofRegisterMouseEvents(this);
-	ofRegisterKeyEvents(this);
 	//ofAddListener(ofEvents.mousePressed,this,&ofxWidget::mousePressed);
 	//ofAddListener(ofEvents.mouseReleased,this,&ofxWidget::mouseReleased);
 	//ofAddListener(ofEvents.mouseMoved,this,&ofxWidget::mouseMoved);
@@ -264,6 +269,13 @@ void ofxWidget::keyPressed(ofKeyEventArgs & key){
 void ofxWidget::keyReleased(ofKeyEventArgs & key){
 	yargs.key = key.key;
 	newEvent(OFX_W_E_KEY_RELEASED,yargs);
+}
+
+void ofxWidget::setFocused(bool isFocused){
+	if(state==OFX_WIDGET_UNFOCUSED && isFocused)
+		state = OFX_WIDGET_FOCUSED;
+	if(state==OFX_WIDGET_FOCUSED && !isFocused)
+		state = OFX_WIDGET_UNFOCUSED;
 }
 
 

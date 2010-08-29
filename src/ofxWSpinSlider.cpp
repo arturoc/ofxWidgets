@@ -8,8 +8,8 @@
 
 ofxWSpinSlider::ofxWSpinSlider(const string & name)
 :ofxWSlider(name)
-,up(name+"_up",true)
-,down(name+"_down",false){
+,down(name+"_down",false)
+,up(name+"_up",true){
 	up.init("");
 	down.init("");
 	up.setAutoRepeat();
