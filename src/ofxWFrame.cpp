@@ -195,6 +195,14 @@ void ofxWFrame::render(ofxWidgetsStyle & style){
 		ofDrawBitmapString(title, 10, 10);
 	}
 
+	//tabs
+	for(unsigned i=0;i<tabs.size();i++){
+		ofRect(i*frameStyle.border.width/tabs.size(),frameStyle.decoration_h,frameStyle.border.width/tabs.size(),frameStyle.tabs_h);
+
+		/*if(i!=tabs.size()-1)
+			ofLine((i+1)*frameStyle.border.width/tabs.size(),frameStyle.decoration_h,(i+1)*frameStyle.border.width/tabs.size(),frameStyle.decoration_h+frameStyle.tabs_h);*/
+		style.text.font->drawString(tabTitles[i],i*frameStyle.border.width/tabs.size(),frameStyle.decoration_h + (frameStyle.tabs_h - style.text.font->getLineHeight())*1.5);
+	}
 
 	/*static ofEventArgs voidArgs;
 	//if(!isVisible()){
@@ -205,12 +213,12 @@ void ofxWFrame::render(ofxWidgetsStyle & style){
 	ofPopMatrix();
 }
 ofRectangle ofxWFrame::getActiveArea(ofxWidgetsStyle & style){
-	ofRectangle area(frameStyle.position.x,frameStyle.position.y,frameStyle.width,20);
+	ofRectangle area(frameStyle.position.x,frameStyle.position.y,frameStyle.border.width,tabs.size()?frameStyle.decoration_h+frameStyle.tabs_h:frameStyle.decoration_h);
 	return area;
 }
 
 ofRectangle ofxWFrame::getTotalArea(ofxWidgetsStyle & style){
-	return getActiveArea(style);
+	return ofRectangle(frameStyle.position.x,frameStyle.position.y,frameStyle.border.width,frameStyle.border.height);
 }
 
 ofxWidgetsState ofxWFrame::manageEvent(ofxWidgetsEvent event, ofxWidgetEventArgs & args, ofxWidgetsState currentState){
@@ -225,6 +233,15 @@ ofxWidgetsState ofxWFrame::manageEvent(ofxWidgetsEvent event, ofxWidgetEventArgs
 
 	case OFX_WIDGET_FOCUSED:
 		if(event == OFX_W_E_POINTER_PRESSED){
+			if(tabs.size() && args.relative_y>frameStyle.decoration_h/(frameStyle.decoration_h+frameStyle.tabs_h)){
+
+				pressedState = OFX_W_FRAME_SELECTING_TAB;
+				pressedTab = args.relative_x * tabs.size();
+				ofLog(OF_LOG_VERBOSE,"frame selecting tab %i in relative pos y %f",pressedTab,args.relative_y);
+			}else{
+				ofLog(OF_LOG_VERBOSE,"frame moving");
+				pressedState = OFX_W_FRAME_MOVING;
+			}
 			prevMousePos.x = args.abs_x;
 			prevMousePos.y = args.abs_y;
 			nextState = OFX_WIDGET_PRESSED;
@@ -239,7 +256,7 @@ ofxWidgetsState ofxWFrame::manageEvent(ofxWidgetsEvent event, ofxWidgetEventArgs
 			nextState = OFX_WIDGET_PRESSED;
 		}
 	case OFX_WIDGET_PRESSED:
-		if(event == OFX_W_E_POINTER_OVER || event == OFX_W_E_POINTER_OUT){
+		if((event == OFX_W_E_POINTER_OVER || event == OFX_W_E_POINTER_OUT) && pressedState==OFX_W_FRAME_MOVING){
 			ofPoint posIncrement = ofPoint(args.abs_x,args.abs_y) - prevMousePos;
 			frameStyle.position += posIncrement;
 
@@ -254,6 +271,10 @@ ofxWidgetsState ofxWFrame::manageEvent(ofxWidgetsEvent event, ofxWidgetEventArgs
 			nextState = OFX_WIDGET_OUT;
 		}
 		if(event == OFX_W_E_POINTER_RELEASED){
+			ofLog(OF_LOG_VERBOSE,"frame release, pressed tab %i, current mouse tab %f, relative x %f ", pressedTab, args.relative_x * tabs.size(),args.relative_x );
+			if(pressedState==OFX_W_FRAME_SELECTING_TAB && pressedTab == (int)(args.relative_x * tabs.size())){
+				selectTab(pressedTab);
+			}
 			nextState = OFX_WIDGET_FOCUSED;
 		}
 	break;
@@ -290,7 +311,11 @@ void ofxWFrame::update(){
 
 void ofxWFrame::addWidget(ofxWidget * widget, string controlName){
 
+
 	controls.push_back(widget);
+	if(tabs.size()){
+		tabs[currentTab].push_back(widget);
+	}
 
 	if(controlName=="") controlName = "widget" + ofToString((int)controls.size());
 
@@ -562,21 +587,58 @@ ofxWidgetFps & ofxWFrame::addFps(string controlName){
 	return *fps;
 }
 
+int ofxWFrame::addTab(const string & title){
+	tabTitles.push_back(title);
+	tabs[tabs.size()];//,vector<ofxWidget*>());
+	selectTab(tabs.size()-1);
+	return tabs.size()-1;
+}
+
+void ofxWFrame::selectTab(int tab){
+	ofLog(OF_LOG_VERBOSE,"selecting tab %i", tab);
+	if(tab<(int)tabs.size() && tab>=0){
+		currentTab = tab;
+		map<int,vector<ofxWidget*> >::iterator it;
+		for(it=tabs.begin();it!=tabs.end();it++){
+			for(unsigned i=0;i<it->second.size();i++){
+				if(it->first==currentTab){
+					it->second[i]->setVisible(true);
+					it->second[i]->enable();
+				}else{
+					it->second[i]->setVisible(false);
+					it->second[i]->disable();
+				}
+			}
+		}
+	}
+}
+
+int ofxWFrame::getTabCount(){
+	return tabs.size();
+}
+
 ofPoint ofxWFrame::getNextPosition(){
-	float totalHeight = frameStyle.vSpacing + frameStyle.decoration_h;
+	float totalHeight = frameStyle.vSpacing + frameStyle.decoration_h + (tabs.size()?frameStyle.tabs_h:0);
 	float totalWidth = frameStyle.hSpacing;
 	//float frameWidth = frameStyle.width!=-1?frameStyle.width:ofGetWidth();
 	float frameHeight = frameStyle.height!=-1?frameStyle.height:ofGetHeight();
 	float maxControlWidth = 0;
-	for(unsigned int i = 0; i<controls.size(); i++){
-		float controlWidth=controls[i]->getControlTotalArea().width;
-		float controlHeight=controls[i]->getControlTotalArea().height;
+	for(unsigned int i = 0; i<(tabs.size()?tabs[currentTab].size():controls.size()); i++){
+		float controlWidth;
+		float controlHeight;
+		if(tabs.size()){
+			controlWidth=tabs[currentTab][i]->getControlTotalArea().width;
+			controlHeight=tabs[currentTab][i]->getControlTotalArea().height;
+		}else{
+			controlWidth=controls[i]->getControlTotalArea().width;
+			controlHeight=controls[i]->getControlTotalArea().height;
+		}
 		totalHeight += controlHeight;
 		totalHeight += frameStyle.vSpacing;
 		if(controlWidth>maxControlWidth)
 			maxControlWidth=controlWidth;
 		if(totalHeight>frameHeight && !frameStyle.growOnHeight){
-			totalHeight=frameStyle.vSpacing + frameStyle.decoration_h;
+			totalHeight=frameStyle.vSpacing + frameStyle.decoration_h + (tabs.size()?frameStyle.tabs_h:0);
 			totalWidth+=maxControlWidth+frameStyle.hSpacing;
 			//maxControlWidth=0;
 		}

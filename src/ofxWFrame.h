@@ -80,6 +80,10 @@ public:
 	ofxWTextBox & addTextBox(const string & title, string text="", string controlName="", string _style="");
 	ofxWidgetFps & addFps(string controlName="");
 
+	int addTab(const string & title);
+	void selectTab(int tab);
+	int getTabCount();
+
 	ofPoint getNextPosition();
 
 	int getValueI();
@@ -99,6 +103,9 @@ protected:
 	vector<ofxWidget*> controls;
 	map<string, ofxWidget*> controlsIndex;
 	map<string, vector<ofxWToggle*> > groups;
+	map<int, vector<ofxWidget*> > tabs;
+	vector<string> tabTitles;
+	int currentTab;
 	string style;
 	ofxWFrameStyle		frameStyle;
 
@@ -107,6 +114,12 @@ protected:
 	static	ofPoint		next_pos;
 	static float		max_frame_width;
 	bool				auto_pos;
+	enum FramePressedState{
+		OFX_W_FRAME_MOVING,
+		OFX_W_FRAME_SELECTING_TAB
+	};
+	FramePressedState pressedState;
+	int pressedTab;
 };
 
 

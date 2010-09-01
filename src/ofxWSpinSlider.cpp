@@ -79,3 +79,22 @@ ofRectangle ofxWSpinSlider::getActiveArea(ofxWidgetsStyle & style){
 	area.width -= down.getControlActiveSize().x + up.getControlActiveSize().x;
 	return area;
 }
+
+void ofxWSpinSlider::enable(){
+	ofxWidget::enable();
+	up.enable();
+	down.enable();
+}
+
+void ofxWSpinSlider::disable(){
+	ofxWidget::disable();
+	up.disable();
+	down.disable();
+}
+
+void ofxWSpinSlider::setVisible(bool visible){
+	ofxWidget::setVisible(visible);
+	up.setVisible(visible);
+	down.setVisible(visible);
+
+}

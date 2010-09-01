@@ -21,6 +21,9 @@ public:
 	void init(const string & _title, float _value, float _min, float _max, float _step, const string & style);
 	void init(const string & _title, int _value, int _min, int _max, int _step, const string & style);
 
+	virtual void enable();
+	virtual void disable();
+	virtual void setVisible(bool visible);
 
 protected:
 	void render(ofxWidgetsStyle & style);

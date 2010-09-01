@@ -58,6 +58,7 @@ ofxWFrameStyle ofxWStyleLoader::getFrameStyle(string state, string style){
 	frameStyle.vSpacing		= xmlStyles.getValue(style+":frame:"+state+":vSpacing",10);
 	frameStyle.growOnHeight = xmlStyles.getValue(style+":frame:"+state+":grow","height")=="height"?true:false;
 	frameStyle.decoration_h = xmlStyles.getValue(style+":frame:"+state+":decoration_height",20);
+	frameStyle.tabs_h 		= xmlStyles.getValue(style+":frame:"+state+":tabs_height",20);
 	frameStyle.interFrameVSpace = xmlStyles.getValue(style+":frame:"+state+":interFrameVSpace",10);
 	frameStyle.interFrameHSpace = xmlStyles.getValue(style+":frame:"+state+":interFrameHSpace",10);
 	return frameStyle;
